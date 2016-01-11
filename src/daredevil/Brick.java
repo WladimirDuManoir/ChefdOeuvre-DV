@@ -12,17 +12,18 @@ package daredevil;
 public class Brick {
     
     private int id;
-    private int posX;
-     private int posY;
-    private int posZ;
+    private float posX;
+     private float posY;
+    private float posZ;
     private int rot;
     private int color;
 
     public Brick() {
+        
     }
    
     
-     public Brick(int id, int posX, int posY, int posZ, int rot, int color) {
+     public Brick(int id, float posX, float posY, float posZ, int rot, int color) {
         this.id = id;
         this.posX = posX;
         this.posY = posY;
@@ -39,19 +40,19 @@ public class Brick {
         this.id = id;
     }
     
-     public int getPosX() {
+     public float getPosX() {
         return this.posX;
     }
      
-      public int getPosY() {
+      public float getPosY() {
         return this.posY;
     }
       
-       public int getPosZ() {
+       public float getPosZ() {
         return this.posZ;
     }
     
-    public void setPos(int x,int y,int z) {
+    public void setPos(float x,float y,float z) {
         this.posX = x;
         this.posY = y;
         this.posZ = z;
@@ -74,7 +75,11 @@ public class Brick {
     }
     
      public String toString() {
-        return "Brick:: ID = "+this.id;//+", Pos = " + this.posX + "," + this.posY + "," + this.posZ + ", Rot = "+this.rot + ", Color = " + this.color;
+         //  TABLEAU CORRESPONDANCE COULEUR
+        return "Brick:: ID = "+this.id+", Color = " + this.color
+         + ", Pos = " + this.posX + "," + this.posY + "," + this.posZ
+                + ", Rot = "+this.rot ;
+
     }
     
 }
