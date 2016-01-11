@@ -1,3 +1,6 @@
+package daredevil;
+
+import daredevil.Frame;
 import fr.dgac.ivy.Ivy;
 import fr.dgac.ivy.IvyClient;
 import fr.dgac.ivy.IvyException;

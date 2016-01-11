@@ -17,7 +17,19 @@ public class Brick {
     private int posZ;
     private int rot;
     private int color;
+
+    public Brick() {
+    }
    
+    
+     public Brick(int id, int posX, int posY, int posZ, int rot, int color) {
+        this.id = id;
+        this.posX = posX;
+        this.posY = posY;
+        this.posZ = posZ;
+        this.rot = rot;
+        this.color = color;
+    }
     
     public int getId() {
         return id;

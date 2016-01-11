@@ -1,3 +1,5 @@
+package daredevil;
+
 import fr.dgac.ivy.IvyException;
 
 public class Main {

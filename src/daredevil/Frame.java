@@ -1,3 +1,5 @@
+package daredevil;
+
 import javax.swing.*;
 import java.awt.*;
 
