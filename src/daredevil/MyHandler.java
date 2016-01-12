@@ -41,8 +41,7 @@ public class MyHandler extends DefaultHandler {
                 brick.setId(Integer.parseInt(id));
             }
             if (color != null) {
-              brick.setColor((int) Float.parseFloat(color));
-              
+              brick.setColor((int) Float.parseFloat(color.replace(",",".")));
              }
             
             //initialize list
@@ -56,6 +55,7 @@ public class MyHandler extends DefaultHandler {
              //ETABLIR CORRESPONDANCE ROTATION
              //C'est a dire faire une fonction qui selon les valeurs de
              //la matrice de rotation, renvoie Nord, Sud, Est, Ouest
+             // Elle est faite dans la classe Brick. A reorganiser...
              brick.setPos(
                      Float.parseFloat(tokens[9]), 
                      Float.parseFloat(tokens[10]), 
