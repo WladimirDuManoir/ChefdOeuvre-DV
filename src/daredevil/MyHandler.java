@@ -5,8 +5,10 @@
  */
 package daredevil; 
  
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
  
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -39,7 +41,8 @@ public class MyHandler extends DefaultHandler {
                 brick.setId(Integer.parseInt(id));
             }
             if (color != null) {
-            brick.setColor(Integer.parseInt(color));
+              brick.setColor((int) Float.parseFloat(color));
+              
              }
             
             //initialize list
@@ -57,16 +60,16 @@ public class MyHandler extends DefaultHandler {
                      Float.parseFloat(tokens[9]), 
                      Float.parseFloat(tokens[10]), 
                      Float.parseFloat(tokens[11]));
-             System.out.println(tokens[0]);
+             
              if (Integer.parseInt(tokens[0])==1){
                  brick.setRot(1);
              } else if (Integer.parseInt(tokens[0])==-1){
-                 brick.setRot(2);
+                 brick.setRot(3);
              } else if (Integer.parseInt(tokens[0])==0){
                  if (Integer.parseInt(tokens[2])==-1){
-                  brick.setRot(3);                    
+                  brick.setRot(4);                    
                  } else if (Integer.parseInt(tokens[2])==1){
-                        brick.setRot(3);                    
+                        brick.setRot(2);                    
 
                  }
              }

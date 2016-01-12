@@ -80,6 +80,7 @@ public final class AppFrame extends JFrame{
             } catch (ParserConfigurationException | SAXException | IOException ex) {
         ex.printStackTrace();
         }
+         System.out.println("Parsing complete");
              }
              
          });

@@ -74,11 +74,56 @@ public class Brick {
         this.color = c;
     }
     
+    // TRANSFORMER CA EN CLASSE ENUM
+    public String convertRotToString(int r){
+        String s = new String();
+        switch (r) {
+            case 1:  s = "NORTH";
+                     break;
+            case 2:  s = "EAST";
+                     break;
+            case 3:  s = "SOUTH";
+                     break;
+            case 4:  s = "WEST";
+                     break;
+            default: System.out.println("gerer erreur ici");
+                    break;
+            }
+                    return s;
+        
+    }
+    
+    // TRANSFORMER CA EN CLASSE ENUM
+    public String convertColorToString(int c){
+        String s = new String();
+        switch (c) {
+            case 21:  s = "Rouge";
+                     break;
+            case 1:  s = "Blanc";
+                     break;
+            case 26:  s = "Noir";
+                     break;
+            case 24:  s = "Jaune";
+                     break;
+            case 28:  s = "Vert";
+                     break;
+            case 23:  s = "Bleu";
+                     break;
+            case 124:  s = "Violet";
+                     break;
+            case 221:  s = "Rose";
+                     break;
+            default: System.out.println("gerer erreur ici");
+                    break;
+            }
+         return s;
+    }
+    
      public String toString() {
          //  TABLEAU CORRESPONDANCE COULEUR
-        return "Brick:: ID = "+this.id+", Color = " + this.color
+        return "Brick:: ID = "+this.id+", Color = " + convertColorToString(this.color)
          + ", Pos = " + this.posX + "," + this.posY + "," + this.posZ
-                + ", Rot = "+this.rot ;
+                + ", Rot = "+convertRotToString(this.rot) ;
 
     }
     
