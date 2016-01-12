@@ -20,13 +20,11 @@ import javax.swing.JComponent;
  */
 class AppCanvas extends JComponent{
     
-    private static final Dimension PREFERRED_SIZE = new Dimension(800,600);
-    private static final int TARGET_X = 400;
-    private static final int TARGET_Y = 400;
-        private static final int TARGET_SIZE = 30;
+    private static final Dimension PREFERRED_SIZE = new Dimension(1200,900);
+    private int targetX = 400;
+    private int targetY = 400;
+    private static final int TARGET_SIZE = 30;
 
-
-    
     public AppCanvas(){
         addMouseListener(new MouseAdapter() {
             public void mousePressed (final MouseEvent ev){
@@ -41,16 +39,33 @@ class AppCanvas extends JComponent{
         
                 addMouseMotionListener(new MouseMotionAdapter() {
                     public void mouseMoved (final MouseEvent ev){
-                        System.out.println("distance a cible X: "+(ev.getX()-TARGET_X-0.5*TARGET_SIZE)+",Y: "+(ev.getY()-TARGET_Y-0.5*TARGET_SIZE));
-                        //sayDistance((int) (ev.getX()-TARGET_X-0.5*TARGET_SIZE), (int) (ev.getY()-TARGET_Y-0.5*TARGET_SIZE));
-                          sayDirection((int) (ev.getY()-TARGET_Y-0.5*TARGET_SIZE),(int) (ev.getX()-TARGET_X-0.5*TARGET_SIZE));
+                        System.out.println("distance a cible X: "+(ev.getX()-targetX-0.5*TARGET_SIZE)+",Y: "+(ev.getY()-targetY-0.5*TARGET_SIZE));
+                        //sayDistance((int) (ev.getX()-targetX-0.5*TARGET_SIZE), (int) (ev.getY()-targetY-0.5*TARGET_SIZE));
+                          sayDirection((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
+                          if ((Math.abs(ev.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(ev.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){   
+                              System.out.println("Target trouvée");
+                              sayTargetFound();
+                              repositionnerTarget();
+                              repaint();
+                          }
             }
                     
                     public void mouseDragged (final MouseEvent ev){
                         
             }
+
                 });
 
+    }
+    
+    private void repositionnerTarget() {
+                targetX = (int)(Math.random()*PREFERRED_SIZE.width); 
+                targetY = (int)(Math.random()*PREFERRED_SIZE.height); 
+            }
+    
+    private void sayTargetFound(){
+                    Speech freeTTStargetfound = new Speech("Target Found");
+                    freeTTStargetfound.speak();
     }
     
     public Dimension getPreferredSize(){
@@ -72,6 +87,7 @@ class AppCanvas extends JComponent{
     }
     
     public void sayDirection(int dx, int dy){
+        // FONCTION Atan2 permet de transformer un doublet de coordonnees en angle en radian, ici le 0 rad est au sud.
                     double angle = Math.atan2((double) dy,(double) dx);
                     System.out.println(angle);
              
@@ -126,7 +142,7 @@ class AppCanvas extends JComponent{
                g.setColor(Color.WHITE);
                g.fillRect(0,0,getWidth(),getHeight());
                g.setColor(Color.RED);
-               g.fillOval(TARGET_X,TARGET_Y,TARGET_SIZE,TARGET_SIZE);
+               g.fillOval(targetX,targetY,TARGET_SIZE,TARGET_SIZE);
     }
     
 }

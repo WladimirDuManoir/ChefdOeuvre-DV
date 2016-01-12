@@ -113,7 +113,7 @@ public class Brick {
                      break;
             case 221:  s = "Rose";
                      break;
-            default: System.out.println("gerer erreur ici");
+            default: s = "I do not know this color";
                     break;
             }
          return s;
