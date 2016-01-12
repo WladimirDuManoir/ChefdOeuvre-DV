@@ -93,7 +93,7 @@ public final class AppFrame extends JFrame{
         add(group,BorderLayout.CENTER);
          
          // ESPACE DE GUIDAGE
-         final AppCanvas canvas = new AppCanvas();
+         final Component8Directions3LevelsOfDistance canvas = new Component8Directions3LevelsOfDistance();
          add(canvas,BorderLayout.SOUTH);
          
          pack();

@@ -18,14 +18,14 @@ import javax.swing.JComponent;
  *
  * @author ferreisi
  */
-class AppCanvas extends JComponent{
+class Component8Directions3LevelsOfDistance extends JComponent{
     
     private static final Dimension PREFERRED_SIZE = new Dimension(1200,900);
     private int targetX = 400;
     private int targetY = 400;
     private static final int TARGET_SIZE = 30;
 
-    public AppCanvas(){
+    public Component8Directions3LevelsOfDistance(){
         addMouseListener(new MouseAdapter() {
             public void mousePressed (final MouseEvent ev){
                              
@@ -40,8 +40,9 @@ class AppCanvas extends JComponent{
                 addMouseMotionListener(new MouseMotionAdapter() {
                     public void mouseMoved (final MouseEvent ev){
                         System.out.println("distance a cible X: "+(ev.getX()-targetX-0.5*TARGET_SIZE)+",Y: "+(ev.getY()-targetY-0.5*TARGET_SIZE));
-                        //sayDistance((int) (ev.getX()-targetX-0.5*TARGET_SIZE), (int) (ev.getY()-targetY-0.5*TARGET_SIZE));
+                        //sayDistanceCoordonnees((int) (ev.getX()-targetX-0.5*TARGET_SIZE), (int) (ev.getY()-targetY-0.5*TARGET_SIZE));
                           sayDirection((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
+                          sayDistanceFarClose((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
                           if ((Math.abs(ev.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(ev.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){   
                               System.out.println("Target trouvée");
                               sayTargetFound();
@@ -53,6 +54,8 @@ class AppCanvas extends JComponent{
                     public void mouseDragged (final MouseEvent ev){
                         
             }
+
+            
 
                 });
 
@@ -74,7 +77,20 @@ class AppCanvas extends JComponent{
              
     }
     
-    public void sayDistance(int dx, int dy){
+    private void sayDistanceFarClose(int dx, int dy) {
+                Speech freeTTSfar = new Speech("Far");
+                Speech freeTTSclose = new Speech("Close");
+                Speech freeTTSveryclose = new Speech("Very Close");
+                if (dx*dx+dy*dy>200*200){
+                    freeTTSfar.speak();
+                } else if (dx*dx+dy*dy>100*100){
+                   freeTTSclose.speak();
+                } else {
+                    freeTTSveryclose.speak();
+                }
+            }
+    
+    public void sayDistanceCoordonnees(int dx, int dy){
                     String text1 = Integer.toString(dx);
                     String text2 = Integer.toString(dy);
                     Speech freeTTS1 = new Speech(text1);
