@@ -6,8 +6,11 @@
 package daredevil;
 
 import java.awt.BorderLayout;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JTextArea;
 import javax.swing.WindowConstants;
 
 /**
@@ -16,16 +19,30 @@ import javax.swing.WindowConstants;
  */
 class VisualisationParserFrame extends JFrame{
 
+        String s = new String();
+    
     public VisualisationParserFrame() {
                  setTitle("Visualisation Parser");
                  final VisualisationParserComponent visuParser = new VisualisationParserComponent();
-                 add(visuParser);
+                 add(visuParser,BorderLayout.SOUTH);
                  JButton bouton = new JButton("clickme");
-                 add(bouton);
+                 add(bouton,BorderLayout.NORTH);
+                 s = convertBrickList(MainFrame.brickList);
+                 JTextArea label = new JTextArea(s);         
+                 add(label,BorderLayout.CENTER);
     
          pack();
 
     }
     
+    private String convertBrickList(List<Brick> brickList){
+        String liste= new String();
+        for (Brick brick : brickList) {
+            liste = liste.concat(brick.toString());
+            liste = liste.concat("\n");
+        }
+        return liste;
+
+    }
     
 }

@@ -113,6 +113,10 @@ public class Brick {
                      break;
             case 221:  s = "Rose";
                      break;
+            case 194: s = "Rouge bordeaux";
+                break;
+                    case 154 :s = "Gris clair";
+                        break;
             default: s = "I do not know this color";
                     break;
             }

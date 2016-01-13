@@ -5,6 +5,7 @@
  */
 package daredevil;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -19,12 +20,12 @@ import javax.swing.JLabel;
  */
 class VisualisationParserComponent extends JComponent {
 
-    private static final Dimension PREFERRED_SIZE = new Dimension(400,300);
+    private static final Dimension PREFERRED_SIZE = new Dimension(100,200);
 
     
     public VisualisationParserComponent() {
         this.setSize(PREFERRED_SIZE);
-
+           
     }
  
      public void paintComponent(final Graphics g){
