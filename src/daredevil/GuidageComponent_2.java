@@ -81,6 +81,7 @@ class GuidageComponent_2 extends JComponent {
             
         if (Math.abs(dy)<0.5*TARGET_SIZE){
                 System.out.println("Y axis OK");
+                freeTTSstop.speak();
                 dyOK = true;
                 
             }
@@ -104,6 +105,7 @@ class GuidageComponent_2 extends JComponent {
             
         if (Math.abs(dx)<0.5*TARGET_SIZE){
                 System.out.println("X axis OK");
+                freeTTSstop.speak();
                 dxOK = true;
                 
             }

@@ -118,10 +118,16 @@ public final class MainFrame extends JFrame {
 //        final GuidageComponent_1 canvas = new GuidageComponent_1();
 //        add(canvas, BorderLayout.SOUTH);
         
-            // ESPACE DE GUIDAGE HORIZONTAL/VERTICAL 3 LEVELS OF DISTANCE
+          // ESPACE DE GUIDAGE HORIZONTAL/VERTICAL 3 LEVELS OF DISTANCE
         
-            final GuidageComponent_2 canvas = new GuidageComponent_2();
+//            final GuidageComponent_2 canvas = new GuidageComponent_2();
+//            add(canvas, BorderLayout.SOUTH);
+            
+         // ESPACE DE GUIDAGE PAR LE SON
+            
+            final GuidageComponent_3 canvas = new GuidageComponent_3();
             add(canvas, BorderLayout.SOUTH);
+
 
         pack();
     }
