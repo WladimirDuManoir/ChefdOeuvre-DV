@@ -7,6 +7,7 @@ package daredevil;
 
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
@@ -18,6 +19,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.WindowConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -27,14 +29,17 @@ import org.xml.sax.SAXException;
  *
  * @author ferreisi
  */
-public final class AppFrame extends JFrame{
+public final class MainFrame extends JFrame{
     
     String fichierParse;
-    
-    public AppFrame(){
+    List<Brick> brickList;
+
+          
+    public MainFrame(){
          setTitle("Daredevil");
-        // FlowLayout experimentLayout = new FlowLayout();
-         //setLayout(experimentLayout);
+         setResizable(false);                       
+         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
          
          final JLabel label = new JLabel("Bienvenue dans l'application DAREDEVIL");
          add(label,BorderLayout.NORTH);
@@ -56,12 +61,14 @@ public final class AppFrame extends JFrame{
              }
              
          });
- 
-         
+   
          final JButton parseFichier = new JButton("Parser le fichier");
+         
          parseFichier.addActionListener(new ActionListener(){
              public void actionPerformed(final ActionEvent e){
                     System.out.println("parseFichier ... (Thread :"+Thread.currentThread());
+                    
+                    
                     
                     //PARSING
                     
@@ -70,13 +77,10 @@ public final class AppFrame extends JFrame{
         SAXParser saxParser = saxParserFactory.newSAXParser();
         MyHandler handler = new MyHandler();
         saxParser.parse(new File(fichierParse), handler);
-        //Get Employees list
-        List<Brick> brickList = handler.getBrickList();
-        //print employee information
-        for(Brick brick : brickList){
-            System.out.println(brick);
-            sayBrick(brick);
-        }
+        
+        //Get Brick list
+           brickList = handler.getBrickList();
+
             } catch (ParserConfigurationException | SAXException | IOException ex) {
         ex.printStackTrace();
         }
@@ -85,15 +89,39 @@ public final class AppFrame extends JFrame{
              
          });
          
+         final JButton buttonSayBrickList = new JButton("Enoncer liste briques");
+         
+          buttonSayBrickList.addActionListener(new ActionListener(){
+             public void actionPerformed(final ActionEvent e){
+                             System.out.println("buttonSayBrickList");
+                             sayBrickList(brickList);
+
+             }
+          });
+         
+         final JButton afficherBrickList = new JButton("Afficher liste briques");
+         
+          afficherBrickList.addActionListener(new ActionListener(){
+             public void actionPerformed(final ActionEvent e){
+                 System.out.println("afficherBrickList");
+                //OUVERTURE NOUVELLE FENETRE
+                    VisualisationParserFrame visuParserFrame = new VisualisationParserFrame();
+                    visuParserFrame.setVisible(true); 
+             }
+          });
+         
+         
          //CREE GROUPE DE BOUTONS
          final JPanel group = new JPanel();
         group.add(openFichier);
         group.add(parseFichier);
+        group.add(buttonSayBrickList);
+        group.add(afficherBrickList);
         
         add(group,BorderLayout.CENTER);
          
-         // ESPACE DE GUIDAGE
-         final Component8Directions3LevelsOfDistance canvas = new Component8Directions3LevelsOfDistance();
+         // ESPACE DE GUIDAGE 8 DIRECTIONS 3 LEVELS OF DISTANCE
+         final GuidageComponent_1 canvas = new GuidageComponent_1();
          add(canvas,BorderLayout.SOUTH);
          
          pack();
@@ -104,7 +132,15 @@ public final class AppFrame extends JFrame{
                     String text = brick.toString();
                     Speech freeTTS = new Speech(text);
                     freeTTS.speak();
-
     }
+    
+    public void sayBrickList(List<Brick> brickList){
+         for(Brick brick : brickList){
+            System.out.println(brick);
+            sayBrick(brick);
+    }
+    }
+    
+    
     
 }

@@ -87,15 +87,4 @@ public class MyHandler extends DefaultHandler {
             brickList.add(brick);
         }
     }
- 
- 
-//    @Override
-//    public void characters(char ch[], int start, int length) throws SAXException {
-// 
-//        if (bAge) {
-//            //age element, set Employee age
-//           brick.setAge(Integer.parseInt(new String(ch, start, length)));
-//           bAge = false;
-//        }
-//    }
 }

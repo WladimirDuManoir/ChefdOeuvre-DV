@@ -6,6 +6,7 @@
 package daredevil;
 
 import java.awt.EventQueue;
+import javax.swing.WindowConstants;
 
 /**
  *
@@ -25,7 +26,7 @@ public class Daredevil {
             @Override
             public void run() {
                         System.out.println("Creating GUI... (Thread :"+Thread.currentThread());
-                        final AppFrame frame = new AppFrame();
+                        final MainFrame frame = new MainFrame();
                         frame.setVisible(true);
             }
         });

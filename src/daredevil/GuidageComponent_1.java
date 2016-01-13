@@ -1,8 +1,8 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+//Ceci est le component qui implemente les prototypes suivants :
+//- en direction : direction par système 8 directions
+//- en guidage : guidage par 3 seuils de distance
+
+
 package daredevil;
 
 import java.awt.Color;
@@ -18,14 +18,17 @@ import javax.swing.JComponent;
  *
  * @author ferreisi
  */
-class Component8Directions3LevelsOfDistance extends JComponent{
+class GuidageComponent_1 extends JComponent{
     
     private static final Dimension PREFERRED_SIZE = new Dimension(1200,900);
     private int targetX = 400;
     private int targetY = 400;
     private static final int TARGET_SIZE = 30;
 
-    public Component8Directions3LevelsOfDistance(){
+    public GuidageComponent_1(){
+        
+        
+        
         addMouseListener(new MouseAdapter() {
             public void mousePressed (final MouseEvent ev){
                              
