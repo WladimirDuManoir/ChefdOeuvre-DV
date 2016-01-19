@@ -25,16 +25,19 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
+        
 /**
  *
  * @author ferreisi
  */
 public final class MainFrame extends JFrame {
+    
 
+    
     String fichierParse;
     static List<Brick> brickList;
 
-    public MainFrame() {
+    public MainFrame() throws IOException {
         setTitle("Daredevil");
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -111,7 +114,7 @@ public final class MainFrame extends JFrame {
         group.add(buttonSayBrickList);
         group.add(afficherBrickList);
 
-        add(group, BorderLayout.CENTER);
+        //add(group, BorderLayout.CENTER);
 
         // ESPACE DE GUIDAGE 8 DIRECTIONS 3 LEVELS OF DISTANCE
         

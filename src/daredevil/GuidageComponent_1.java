@@ -20,7 +20,7 @@ import javax.swing.JComponent;
  */
 class GuidageComponent_1 extends JComponent{
     
-    private static final Dimension PREFERRED_SIZE = new Dimension(1200,900);
+    private static final Dimension PREFERRED_SIZE = new Dimension(1920,1200);
     private int targetX = 400;
     private int targetY = 400;
     private static final int TARGET_SIZE = 30;

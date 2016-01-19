@@ -20,7 +20,8 @@ public class Daredevil {
     public static void main(String[] args) {
         
         System.out.println("Starting application... (Thread :"+Thread.currentThread());
-       
+       System.setProperty("mbrola.base", "C:\\Users\\ferreisi\\Desktop\\freetts-1.2.2-bin\\freetts-1.2\\mbrola");
+
         EventQueue.invokeLater(new Runnable() {
 
             @Override
