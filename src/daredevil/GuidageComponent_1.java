@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import javax.swing.JComponent;
 
@@ -23,35 +24,56 @@ class GuidageComponent_1 extends JComponent{
     private static final Dimension PREFERRED_SIZE = new Dimension(1920,1200);
     private int targetX = 400;
     private int targetY = 400;
-    private static final int TARGET_SIZE = 30;
+    private static final int TARGET_SIZE = 50;
 
     public GuidageComponent_1(){
         
-        
-        
-        addMouseListener(new MouseAdapter() {
-            public void mousePressed (final MouseEvent ev){
-                             
-            }
-            
-            public void mouseReleased (final MouseEvent ev){
+        addMouseListener(new MouseListener(){
+                 
 
-            }
- 
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if ((Math.abs(e.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(e.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){ 
+                         repositionnerTarget();
+                         repaint();
+                        }
+                        else {
+                            sayTargetMissed();
+                        }
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                    }
+        
+       
         });
         
                 addMouseMotionListener(new MouseMotionAdapter() {
                     public void mouseMoved (final MouseEvent ev){
                         System.out.println("distance a cible X: "+(ev.getX()-targetX-0.5*TARGET_SIZE)+",Y: "+(ev.getY()-targetY-0.5*TARGET_SIZE));
                         //sayDistanceCoordonnees((int) (ev.getX()-targetX-0.5*TARGET_SIZE), (int) (ev.getY()-targetY-0.5*TARGET_SIZE));
-                          sayDirection((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
-                          sayDistanceFarClose((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
-                          if ((Math.abs(ev.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(ev.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){   
+                        if ((Math.abs(ev.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(ev.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){   
                               System.out.println("Target trouvée");
                               sayTargetFound();
-                              repositionnerTarget();
                               repaint();
-                          }
+                        } else {
+                          sayDirection((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
+                          sayDistanceFarClose((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
+                        }
+                          
             }
                     
                     public void mouseDragged (final MouseEvent ev){
@@ -65,9 +87,19 @@ class GuidageComponent_1 extends JComponent{
     }
     
     private void repositionnerTarget() {
+        
                 targetX = (int)(Math.random()*PREFERRED_SIZE.width); 
                 targetY = (int)(Math.random()*PREFERRED_SIZE.height); 
+                        Speech freeTTStargetfound = new Speech("New target");
+                                            freeTTStargetfound.speak();
+
+
             }
+    
+    private void sayTargetMissed(){
+        Speech freeTTStargetfound = new Speech("Missed");
+                    freeTTStargetfound.speak();
+    }
     
     private void sayTargetFound(){
                     Speech freeTTStargetfound = new Speech("Target Found");

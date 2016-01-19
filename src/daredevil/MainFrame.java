@@ -13,6 +13,7 @@ import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
+import javax.sound.midi.MidiUnavailableException;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -37,7 +38,7 @@ public final class MainFrame extends JFrame {
     String fichierParse;
     static List<Brick> brickList;
 
-    public MainFrame() throws IOException {
+    public MainFrame() throws IOException, MidiUnavailableException {
         setTitle("Daredevil");
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -128,7 +129,12 @@ public final class MainFrame extends JFrame {
             
          // ESPACE DE GUIDAGE PAR LE SON
             
-            final GuidageComponent_3 canvas = new GuidageComponent_3();
+//            final GuidageComponent_3 canvas = new GuidageComponent_3();
+//            add(canvas, BorderLayout.SOUTH);
+            
+         // BON ESPACE DE GUIDAGE PAR LES AXES ET LE SON CONTINU
+            
+            final GuidageComponent_4 canvas = new GuidageComponent_4();
             add(canvas, BorderLayout.SOUTH);
 
 

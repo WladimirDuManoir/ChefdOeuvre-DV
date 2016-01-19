@@ -1,6 +1,5 @@
 //Ceci est le component qui implemente les prototypes suivants :
-//- en direction : direction par système 8 directions
-//- en guidage : guidage par 3 seuils de distance
+//- en guidage : guidage par gamme de piano
 
 
 package daredevil;
@@ -10,6 +9,7 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -21,14 +21,13 @@ import javax.swing.JComponent;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
 
-
 /**
  *
  * @author ferreisi
  */
 class GuidageComponent_3 extends JComponent{
     
-    private static final Dimension PREFERRED_SIZE = new Dimension(800,600);
+    private static final Dimension PREFERRED_SIZE = new Dimension(1920,1200);
     private int targetX = 400;
     private int targetY = 400;
     private static final int TARGET_SIZE = 30;
@@ -42,10 +41,40 @@ class GuidageComponent_3 extends JComponent{
     AudioStream audioStreamE;
     AudioStream audioStreamF;
     AudioStream audioStreamG;
-   
-
+  
     
     public GuidageComponent_3() throws IOException{
+        
+                addMouseListener(new MouseListener(){
+                 
+
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        if ((Math.abs(e.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(e.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){ 
+                         repositionnerTarget();
+                         repaint();
+                        }
+                    }
+
+                    @Override
+                    public void mousePressed(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseEntered(MouseEvent e) {
+                    }
+
+                    @Override
+                    public void mouseExited(MouseEvent e) {
+                    }
+
+                    
+
+                });
         
                 addMouseMotionListener(new MouseMotionAdapter() {
                     public void mouseMoved (final MouseEvent ev){
@@ -58,7 +87,6 @@ class GuidageComponent_3 extends JComponent{
                           if ((Math.abs(ev.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(ev.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){   
                               System.out.println("Target trouvée");
                               sayTargetFound();
-                              repositionnerTarget();
                               repaint();
                           }
             }

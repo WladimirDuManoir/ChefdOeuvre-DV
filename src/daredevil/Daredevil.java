@@ -6,6 +6,9 @@
 package daredevil;
 
 import java.awt.EventQueue;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.WindowConstants;
 
 /**
@@ -26,9 +29,13 @@ public class Daredevil {
 
             @Override
             public void run() {
-                        System.out.println("Creating GUI... (Thread :"+Thread.currentThread());
-                        final MainFrame frame = new MainFrame();
-                        frame.setVisible(true);
+                try {
+                    System.out.println("Creating GUI... (Thread :"+Thread.currentThread());
+                    final MainFrame frame = new MainFrame();
+                    frame.setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Daredevil.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
         
