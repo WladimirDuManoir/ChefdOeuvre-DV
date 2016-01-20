@@ -29,11 +29,14 @@ import sun.audio.AudioStream;
  *
  * @author ferreisi
  */
-class GuidageComponent_4 extends JComponent {
+class GuidageComponent_5 extends JComponent {
 
     private static final Dimension PREFERRED_SIZE = new Dimension(1920, 1200);
     private static final int FREQUENCE_MIN = 100;
     private static final int SUPPLEMENT_FREQUENCE = 600;
+    private static final int PITCH_MIN = 55;
+    private static final int SUPPLEMENT_PITCH = 30;
+    
     private int targetX = 400;
     private int targetY = 400;
     private static final int TARGET_SIZE = 50;
@@ -41,9 +44,6 @@ class GuidageComponent_4 extends JComponent {
     Boolean dxOK = false;
     private int posX = 0;
     private int posY = 0;
-    
-    private int nbTargetFound = 0;
-    private int nbErreurs = 0;
 
     // Variables pour le synthetiseur MIDI
     Synthesizer syn = MidiSystem.getSynthesizer();
@@ -52,13 +52,11 @@ class GuidageComponent_4 extends JComponent {
     // Variables pour les sons WAV
     AudioStream audioStreamA;
     AudioStream audioStreamB;
-    AudioStream audioStreamC;
-    AudioStream audioStreamD;
 
     private boolean audioStreamAPlayed = false;
     private boolean audioStreamBPlayed = false;
 
-    public GuidageComponent_4() throws MidiUnavailableException, IOException {
+    public GuidageComponent_5() throws MidiUnavailableException, IOException {
 
         syn.open();
         final MidiChannel[] mc = syn.getChannels();
@@ -68,30 +66,34 @@ class GuidageComponent_4 extends JComponent {
         Thread mainLoop = new Thread() {
             public void run() {
                 int frequence = 400;
+                int pitch = 70;
                 long startTime = System.currentTimeMillis();
                 do {
                     long currentTime = System.currentTimeMillis();
                     long elapsedTime = currentTime - startTime; // calcul du temps écoulé
 
                     if (elapsedTime > frequence) {
-
+ 
                         //Action principale
-                        if ((dyOK) && (!dxOK)) {
-                            playNote();
-                        }
+                        System.out.println("hello babe");
+                        System.out.println("posX :" + posX);
+                        System.out.println("posY :" + posY);
+
+                        playNote(pitch);
+                        
 
                         //playNote();
+                        pitch = changePitch(posX);
                         frequence = changeFrequence(posY);
 
                         //Remise a zéro du compteur pour le timer
-                        
                         startTime = currentTime; // on réinitialise le compteur
                     }
 
                 } while (true);
             }
         };
-
+        
         mainLoop.start();
 
         addMouseListener(new MouseListener() {
@@ -99,19 +101,9 @@ class GuidageComponent_4 extends JComponent {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if ((Math.abs(e.getX() - targetX - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE) && (Math.abs(e.getY() - targetY - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE)) {
-                    playNote4();
-                    nbTargetFound++;
-                    try {
-                        repositionnerTarget(e.getX());
-                    } catch (IOException ex) {
-                        Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
-                    }
+                    repositionnerTarget();
                     repaint();
-                } else {
-                    playNote5();
-                    nbErreurs++;
                 }
-                printResultats();
             }
 
             @Override
@@ -143,29 +135,40 @@ class GuidageComponent_4 extends JComponent {
                 } catch (IOException ex) {
                     Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
                 }
+
+                if ((Math.abs(ev.getX() - targetX - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE) && (Math.abs(ev.getY() - targetY - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE)) {
+                    System.out.println("Target trouvée");
+                    sayTargetFound();
+                    repaint();
+                }
             }
 
         });
 
     }
 
-    private void printResultats() {
-        System.out.println("***");
-        System.out.println("Nombre cible trouvées: "+nbTargetFound+", nombre erreurs :"+nbErreurs);
+    private int changeFrequence(int y) {
+        System.out.println("change freq");
+        int dy = Math.abs(posY - targetY);
+        System.out.println(dy);
+        return (int) (FREQUENCE_MIN + (dy / PREFERRED_SIZE.getHeight()) * SUPPLEMENT_FREQUENCE);
     }
 
-    private int changeFrequence(int x) {
-        int dx = Math.abs(posY - targetY);
-        return (int) (FREQUENCE_MIN + (dx / PREFERRED_SIZE.getHeight()) * SUPPLEMENT_FREQUENCE);
+    private int changePitch(int x) {
+        System.out.println("change freq");
+        int dx = Math.abs(posX - targetX);
+        System.out.println(dx);
+        return (int) (PITCH_MIN + (dx / PREFERRED_SIZE.getWidth()) * SUPPLEMENT_PITCH);
     }
-
-    private void playNote() {
+    
+    private void playNote(int pitch) {
         channel.allNotesOff();
 
         if (channel != null) {
             channel.programChange(1024, 13);
-            channel.noteOn(80, 50);
+            channel.noteOn(pitch, 50);
         }
+
     }
 
     private void playNote2() {
@@ -178,7 +181,7 @@ class GuidageComponent_4 extends JComponent {
         }
 
     }
-
+    
     private void playNote3() {
         channel.allNotesOff();
 
@@ -190,45 +193,16 @@ class GuidageComponent_4 extends JComponent {
 
     }
 
-    private void playNote4() {
-        channel.allNotesOff();
-
-        if (channel != null) {
-            channel.programChange(1024, 11);
-
-            channel.noteOn(75, 70);
-        }
-
-    }
-
-    private void playNote5() {
-        channel.allNotesOff();
-
-        if (channel != null) {
-            channel.programChange(0, 27);
-            channel.noteOn(40, 70);
-        }
-
-    }
-
-    private void repositionnerTarget(int x) throws IOException {
-
-        this.audioStreamC = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtargetgauche.wav"));
-        this.audioStreamD = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtargetdroite.wav"));
-
+    private void repositionnerTarget() {
         targetX = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 0.5 * TARGET_SIZE));
         targetY = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 0.5 * TARGET_SIZE));
-        if (x > targetX) {
-            AudioPlayer.player.start(audioStreamC);
-
-        } else {
-            AudioPlayer.player.start(audioStreamD);
-
-        }
-        audioStreamAPlayed = true;
-        audioStreamBPlayed = true;
+        audioStreamAPlayed = false;
+        audioStreamBPlayed = false;
         dyOK = false;
         dxOK = false;
+    }
+
+    private void sayTargetFound() {
     }
 
     public Dimension getPreferredSize() {
@@ -239,18 +213,20 @@ class GuidageComponent_4 extends JComponent {
 
     private void sayAxeDirection(int dx, int dy) throws IOException {
 
-        this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
-        this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
+        this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\agauche.wav"));
+        this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\adroite.wav"));
 
         //VERIFICATION DE DY
         if (!dyOK) {
             if (dy > 0) {
+                System.out.println("gauche");
                 if (!audioStreamAPlayed) {
                     AudioPlayer.player.start(audioStreamA);
                     audioStreamAPlayed = true;
 
                 }
             } else {
+                System.out.println("droite");
                 if (!audioStreamBPlayed) {
                     AudioPlayer.player.start(audioStreamB);
                     audioStreamBPlayed = true;
@@ -258,7 +234,6 @@ class GuidageComponent_4 extends JComponent {
             }
 
             if (Math.abs(dy) < 0.5 * TARGET_SIZE) {
-                playNote();
                 dyOK = true;
 
             }
@@ -266,15 +241,17 @@ class GuidageComponent_4 extends JComponent {
             if (Math.abs(dy) > 0.5 * TARGET_SIZE) {
                 audioStreamAPlayed = false;
                 audioStreamBPlayed = false;
+                playNote3();
                 dyOK = false;
-
+                
+                
             }
 
             if (!dxOK) {
                 // VERIFICATION DE DX
 
                 if (Math.abs(dx) < 0.5 * TARGET_SIZE) {
-                    playNote2();
+                    playNote2();                   
                     dxOK = true;
 
                 }
@@ -293,8 +270,6 @@ class GuidageComponent_4 extends JComponent {
         g.fillRect(0, 0, getWidth(), getHeight());
         g.setColor(Color.RED);
         g.fillRect(targetX, targetY, TARGET_SIZE, TARGET_SIZE);
-        g.drawLine(targetX, 0, targetX, (int) PREFERRED_SIZE.getHeight());
-        g.drawLine(targetX + TARGET_SIZE, 0, targetX + TARGET_SIZE, (int) PREFERRED_SIZE.getHeight());
     }
 
 }

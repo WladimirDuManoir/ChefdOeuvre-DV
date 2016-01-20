@@ -44,7 +44,7 @@ public final class MainFrame extends JFrame {
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
         final JLabel label = new JLabel("Bienvenue dans l'application DAREDEVIL");
-        add(label, BorderLayout.NORTH);
+       // add(label, BorderLayout.NORTH);
 
         final JButton openFichier = new JButton("Sélectionner fichier");
 
@@ -135,8 +135,10 @@ public final class MainFrame extends JFrame {
          // BON ESPACE DE GUIDAGE PAR LES AXES ET LE SON CONTINU
             
             final GuidageComponent_4 canvas = new GuidageComponent_4();
-            add(canvas, BorderLayout.SOUTH);
+            add(canvas);
 
+//             final GuidageComponent_5 canvas = new GuidageComponent_5();
+//            add(canvas, BorderLayout.SOUTH);
 
         pack();
     }
