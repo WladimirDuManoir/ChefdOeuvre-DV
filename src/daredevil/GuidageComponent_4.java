@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.TimerTask;
 import java.util.logging.Level;
@@ -54,6 +55,8 @@ class GuidageComponent_4 extends JComponent {
     AudioStream audioStreamB;
     AudioStream audioStreamC;
     AudioStream audioStreamD;
+    AudioStream audioStreamE;
+    AudioStream audioStreamF;
 
     private boolean audioStreamAPlayed = false;
     private boolean audioStreamBPlayed = false;
@@ -77,17 +80,18 @@ class GuidageComponent_4 extends JComponent {
 
                         //Action principale
                         if ((dyOK) && (!dxOK)) {
-                            playNote();
+                            playNote(1);
                         }
 
                         //playNote();
                         frequence = changeFrequence(posY);
 
                         //Remise a zéro du compteur pour le timer
-                        
                         startTime = currentTime; // on réinitialise le compteur
                     }
-
+                       if (AudioPlayer.player.isAlive()){
+                           System.out.println("alive");
+                       }
                 } while (true);
             }
         };
@@ -98,20 +102,28 @@ class GuidageComponent_4 extends JComponent {
 
             @Override
             public void mouseClicked(MouseEvent e) {
-                if ((Math.abs(e.getX() - targetX - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE) && (Math.abs(e.getY() - targetY - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE)) {
-                    playNote4();
-                    nbTargetFound++;
+                if (e.getButton() == MouseEvent.BUTTON1) {
+                    if ((Math.abs(e.getX() - targetX - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE) && (Math.abs(e.getY() - targetY - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE)) {
+                        playNote(4);
+                        nbTargetFound++;
+                        try {
+                            repositionnerTarget(e.getX());
+                        } catch (IOException ex) {
+                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        repaint();
+                    } else {
+                        playNote(5);
+                        nbErreurs++;
+                    }
+                    printResultats();
+                } else if (e.getButton() == MouseEvent.BUTTON3) {
                     try {
-                        repositionnerTarget(e.getX());
+                        repeatInstruction((int) (e.getX() - targetX - 0.5 * TARGET_SIZE), (int) (e.getY() - targetY - 0.5 * TARGET_SIZE));
                     } catch (IOException ex) {
                         Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
                     }
-                    repaint();
-                } else {
-                    playNote5();
-                    nbErreurs++;
                 }
-                printResultats();
             }
 
             @Override
@@ -151,7 +163,38 @@ class GuidageComponent_4 extends JComponent {
 
     private void printResultats() {
         System.out.println("***");
-        System.out.println("Nombre cible trouvées: "+nbTargetFound+", nombre erreurs :"+nbErreurs);
+        System.out.println("Nombre cible trouvées: " + nbTargetFound + ", nombre erreurs :" + nbErreurs);
+    }
+
+    private void repeatInstruction(int dx, int dy) throws IOException {
+
+        this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
+        this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
+        this.audioStreamE = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\haut.wav"));
+        this.audioStreamF = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\bas.wav"));
+
+        
+        if (!dyOK) {
+            if (dx > 0) {
+                AudioPlayer.player.start(audioStreamA);
+                        AudioPlayer.player.interrupt();
+
+            } else {
+                AudioPlayer.player.start(audioStreamB);
+            }
+        } else {
+            if (!dxOK) {
+                if (dy > 0) {
+                    AudioPlayer.player.start(audioStreamE);
+
+                } else {
+                    AudioPlayer.player.start(audioStreamF);
+                }
+            } else {
+                playNote(2);
+            }
+        }
+        
     }
 
     private int changeFrequence(int x) {
@@ -159,56 +202,34 @@ class GuidageComponent_4 extends JComponent {
         return (int) (FREQUENCE_MIN + (dx / PREFERRED_SIZE.getHeight()) * SUPPLEMENT_FREQUENCE);
     }
 
-    private void playNote() {
+    private void playNote(int note) {
         channel.allNotesOff();
-
         if (channel != null) {
-            channel.programChange(1024, 13);
-            channel.noteOn(80, 50);
+
+            switch (note) {
+                case 1:
+                    channel.programChange(1024, 13);
+                    channel.noteOn(80, 50);
+                    break;
+                case 2:
+                    channel.programChange(0, 9);
+                    channel.noteOn(70, 70);
+                    break;
+                case 3:
+                    channel.programChange(0, 9);
+                    channel.noteOn(50, 70);
+                    break;
+                case 4:
+                    channel.programChange(1024, 11);
+                    channel.noteOn(75, 70);
+                    break;
+
+                case 5:
+                    channel.programChange(0, 27);
+                    channel.noteOn(40, 70);
+                    break;
+            }
         }
-    }
-
-    private void playNote2() {
-        channel.allNotesOff();
-
-        if (channel != null) {
-            channel.programChange(0, 9);
-
-            channel.noteOn(70, 70);
-        }
-
-    }
-
-    private void playNote3() {
-        channel.allNotesOff();
-
-        if (channel != null) {
-            channel.programChange(0, 9);
-
-            channel.noteOn(50, 70);
-        }
-
-    }
-
-    private void playNote4() {
-        channel.allNotesOff();
-
-        if (channel != null) {
-            channel.programChange(1024, 11);
-
-            channel.noteOn(75, 70);
-        }
-
-    }
-
-    private void playNote5() {
-        channel.allNotesOff();
-
-        if (channel != null) {
-            channel.programChange(0, 27);
-            channel.noteOn(40, 70);
-        }
-
     }
 
     private void repositionnerTarget(int x) throws IOException {
@@ -241,6 +262,8 @@ class GuidageComponent_4 extends JComponent {
 
         this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
         this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
+        this.audioStreamE = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\haut.wav"));
+        this.audioStreamF = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\bas.wav"));
 
         //VERIFICATION DE DY
         if (!dyOK) {
@@ -258,7 +281,12 @@ class GuidageComponent_4 extends JComponent {
             }
 
             if (Math.abs(dy) < 0.5 * TARGET_SIZE) {
-                playNote();
+                playNote(1);
+                if (dx > 0) {
+                    AudioPlayer.player.start(audioStreamE);
+                } else {
+                    AudioPlayer.player.start(audioStreamF);
+                }
                 dyOK = true;
 
             }
@@ -272,15 +300,18 @@ class GuidageComponent_4 extends JComponent {
 
             if (!dxOK) {
                 // VERIFICATION DE DX
-
                 if (Math.abs(dx) < 0.5 * TARGET_SIZE) {
-                    playNote2();
+                    playNote(2);
                     dxOK = true;
-
                 }
             } else {
                 if (Math.abs(dx) > 0.5 * TARGET_SIZE) {
-                    playNote3();
+                    if (dx > 0) {
+                        AudioPlayer.player.start(audioStreamE);
+                    } else {
+                        AudioPlayer.player.start(audioStreamF);
+                    }
+                    playNote(3);
                     dxOK = false;
                 }
             }
