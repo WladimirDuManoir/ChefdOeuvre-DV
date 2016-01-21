@@ -1,7 +1,6 @@
 //Ceci est le component qui implemente les prototypes suivants :
-//- en guidage : guidage par gamme de piano
-
-
+//- en direction : direction par système 8 directions
+//- en guidage : guidage par 3 seuils de distance
 package daredevil;
 
 import java.awt.Color;
@@ -12,11 +11,14 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.midi.Instrument;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 import javax.swing.JComponent;
 import sun.audio.AudioPlayer;
 import sun.audio.AudioStream;
@@ -25,162 +27,305 @@ import sun.audio.AudioStream;
  *
  * @author ferreisi
  */
-class GuidageComponent_3 extends JComponent{
-    
-    private static final Dimension PREFERRED_SIZE = new Dimension(1920,1200);
+class GuidageComponent_3 extends JComponent {
+
+    private static final Dimension PREFERRED_SIZE = new Dimension(1920, 1200);
     private int targetX = 400;
     private int targetY = 400;
-    private static final int TARGET_SIZE = 30;
-    private Zone zone = Zone.A;
-    private static final int TailleZoneDistance = TARGET_SIZE;
- 
-    AudioStream audioStreamA;
-    AudioStream audioStreamB;
-    AudioStream audioStreamC;
-    AudioStream audioStreamD;
-    AudioStream audioStreamE;
-    AudioStream audioStreamF;
-    AudioStream audioStreamG;
-  
-    
-    public GuidageComponent_3() throws IOException{
-        
-                addMouseListener(new MouseListener(){
-                 
+    private static final int TARGET_SIZE = 50;
+    private int posX = 0;
+    private int posY = 0;
 
-                    @Override
-                    public void mouseClicked(MouseEvent e) {
-                        if ((Math.abs(e.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(e.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){ 
-                         repositionnerTarget();
-                         repaint();
-                        }
-                    }
+    private int nbTargetFound = 0;
+    private int nbErreurs = 0;
+    private int TAILLE_PALIER = 100;
 
-                    @Override
-                    public void mousePressed(MouseEvent e) {
-                    }
+    Boolean cibleTrouvee = false;
 
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                    }
+    private Zone zone;
 
-                    @Override
-                    public void mouseEntered(MouseEvent e) {
-                    }
+    // Variables pour le synthetiseur MIDI
+    Synthesizer syn = MidiSystem.getSynthesizer();
+    MidiChannel channel = syn.getChannels()[0];
 
-                    @Override
-                    public void mouseExited(MouseEvent e) {
-                    }
+    //
+    AudioStream audioStreamHaut;
+    AudioStream audioStreamBas;
+    AudioStream audioStreamDroite;
+    AudioStream audioStreamGauche;
+    AudioStream audioStreamEnHautAGauche;
+    AudioStream audioStreamEnHautADroite;
+    AudioStream audioStreamEnBasAGauche;
+    AudioStream audioStreamEnBasADroite;
+    AudioStream audioStreamLoin;
+    AudioStream audioStreamProche;
+    AudioStream audioStreamTresLoin;
+    AudioStream audioStreamTresProche;
+    AudioStream audioStreamNewTarget;
 
-                    
+    public GuidageComponent_3() throws MidiUnavailableException, IOException, InterruptedException {
 
-                });
-        
-                addMouseMotionListener(new MouseMotionAdapter() {
-                    public void mouseMoved (final MouseEvent ev){
-                        System.out.println("distance a cible X: "+(ev.getX()-targetX-0.5*TARGET_SIZE)+",Y: "+(ev.getY()-targetY-0.5*TARGET_SIZE));
+        syn.open();
+        final MidiChannel[] mc = syn.getChannels();
+        Instrument[] instr = syn.getDefaultSoundbank().getInstruments();
+        syn.loadInstrument(instr[33]);
+
+        Thread mainLoop2 = new Thread() {
+            public void run() {
+                int frequence = 2000;
+                long startTime = System.currentTimeMillis();
+                do {
+                    long currentTime = System.currentTimeMillis();
+                    long elapsedTime = currentTime - startTime; // calcul du temps écoulé
+
+                    if (elapsedTime > frequence) {
+                        System.out.println("debug");
                         try {
-                            sayDistancePiano((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
+                            if (!cibleTrouvee) {
+                                sayDirection(posX - targetX, posY - targetY);
+                            }
                         } catch (IOException ex) {
-                            Logger.getLogger(GuidageComponent_3.class.getName()).log(Level.SEVERE, null, ex);
+                            Logger.getLogger(GuidageComponent_1.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                          if ((Math.abs(ev.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(ev.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){   
-                              System.out.println("Target trouvée");
-                              sayTargetFound();
-                              repaint();
-                          }
+
+                        //Remise a zéro du compteur pour le timer
+                        startTime = currentTime; // on réinitialise le compteur
+
+                    }
+
+                } while (true);
             }
-                    
-                    public void mouseDragged (final MouseEvent ev){
-                        
-            }
+        };
 
-            
+        mainLoop2.start();
 
-                });
+        addMouseListener(new MouseListener() {
 
-    }
-    
-    private void repositionnerTarget() {
-                targetX = TARGET_SIZE+(int)(Math.random()*(PREFERRED_SIZE.width-TARGET_SIZE)); 
-                targetY = TARGET_SIZE+(int)(Math.random()*(PREFERRED_SIZE.height-TARGET_SIZE)); 
-            }
-    
-    private void sayTargetFound(){
-                    Speech freeTTStargetfound = new Speech("Target Found");
-                    freeTTStargetfound.speak();
-    }
-    
-    public Dimension getPreferredSize(){
-             System.out.println("Get preferred size... (Thread :"+Thread.currentThread());
-             return PREFERRED_SIZE;
-             
-    }
-    
-    public enum Zone {
-    A, B, C, D,
-    E, F, G 
-}
-    
-    private void sayDistancePiano(int dx, int dy) throws FileNotFoundException, IOException {
-       
-        this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\Piano keys\\a.wav"));
-        this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\Piano keys\\b.wav"));
-        this.audioStreamC = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\Piano keys\\c.wav"));
-        this.audioStreamD = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\Piano keys\\d.wav"));
-        this.audioStreamE = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\Piano keys\\e.wav"));
-        this.audioStreamF = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\Piano keys\\f.wav"));
-        this.audioStreamG = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\Piano keys\\g.wav"));
-                
-                if (dx*dx+dy*dy>36*TailleZoneDistance*36){
-                    if (zone != Zone.A){
-                                                AudioPlayer.player.start(audioStreamA);
-                                                    zone = Zone.A;
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if ((Math.abs(e.getX() - targetX - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE) && (Math.abs(e.getY() - targetY - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE)) {
+                    playNote(4);
+                    nbTargetFound++;
+                    try {
+                        repositionnerTarget(e.getX(), e.getY());
+                    } catch (IOException ex) {
+                        Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
                     }
-
-                } else if (dx*dx+dy*dy>25*TailleZoneDistance*TailleZoneDistance){
-                    if (zone != Zone.B){
-                        AudioPlayer.player.start(audioStreamB);
-                        zone = Zone.B;
-                    }
-                } else if (dx*dx+dy*dy>16*TailleZoneDistance*TailleZoneDistance){ 
-                    if (zone != Zone.C){
-                        AudioPlayer.player.start(audioStreamC);
-                        zone = Zone.C;
-                    }
-
-                } else if (dx*dx+dy*dy>9*TailleZoneDistance*TailleZoneDistance){
-                    if (zone != Zone.D){
-                        AudioPlayer.player.start(audioStreamD);
-                        zone = Zone.D;
-                    }
-
-                } else if (dx*dx+dy*dy>4*TailleZoneDistance*TailleZoneDistance){
-                    if (zone != Zone.E){
-                        AudioPlayer.player.start(audioStreamE);
-                        zone = Zone.E;
-                    }
-
-                } else if (dx*dx+dy*dy>20*20){
-                    if (zone != Zone.F){
-                        AudioPlayer.player.start(audioStreamF);
-                        zone = Zone.F;
-                    }
-
+                    repaint();
                 } else {
-                    if (zone != Zone.G){
-                        AudioPlayer.player.start(audioStreamG);
-                        zone = Zone.G;
-                    }
+                    playNote(5);
+                    nbErreurs++;
                 }
+                printResultats();
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+
+        });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseMoved(final MouseEvent ev) {
+
+                //Update coordonnees de la souris
+                posX = ev.getX();
+                posY = ev.getY();
+
+                try {
+                    cibleTrouvee((int) (posY - targetY - 0.5 * TARGET_SIZE), (int) (posX - targetX - 0.5 * TARGET_SIZE));
+                } catch (IOException ex) {
+                    Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                try {
+                    distanceCible((int) (posY - targetY - 0.5 * TARGET_SIZE), (int) (posX - targetX - 0.5 * TARGET_SIZE));
+                } catch (IOException ex) {
+                    Logger.getLogger(GuidageComponent_3.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+
+        });
     }
-                    
-    public void paintComponent(final Graphics g){
-              System.out.println("Painting component... (Thread :"+Thread.currentThread());
-               g.setColor(Color.WHITE);
-               g.fillRect(0,0,getWidth(),getHeight());
-               g.setColor(Color.RED);
-               g.fillOval(targetX,targetY,TARGET_SIZE,TARGET_SIZE);
+
+    private void repositionnerTarget(int x, int y) throws IOException {
+
+        this.audioStreamNewTarget = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtarget.wav"));
+
+        targetX = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 0.5 * TARGET_SIZE));
+        targetY = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 0.5 * TARGET_SIZE));
+
+        AudioPlayer.player.start(audioStreamNewTarget);
+        cibleTrouvee = false;
     }
-    
+
+    public enum Zone {
+
+        A, B, C, D, E, F, G
+    }
+
+    private void distanceCible(int dx, int dy) throws IOException {
+        System.out.println(zone);
+        channel.allNotesOff();
+        if (channel != null) {
+            if (dx * dx + dy * dy > TAILLE_PALIER * TAILLE_PALIER * 36) {
+                if (zone != Zone.G) {
+                    channel.programChange(1024, 11);
+                    channel.noteOn(55, 50);
+                    zone = Zone.G;
+                }
+            } else if (dx * dx + dy * dy > TAILLE_PALIER * TAILLE_PALIER * 25){
+                if (zone != Zone.F) {
+                    channel.programChange(1024, 11);
+                    channel.noteOn(56, 55);
+                    zone = Zone.F;
+                }
+            } else if (dx * dx + dy * dy > TAILLE_PALIER * TAILLE_PALIER * 16) {
+
+                if (zone != Zone.E) {
+                    channel.programChange(1024, 11);
+                    channel.noteOn(57, 60);
+                    zone = Zone.E;
+                }
+            } else if (dx * dx + dy * dy > TAILLE_PALIER * TAILLE_PALIER * 9) {
+                if (zone != Zone.D) {
+                    channel.programChange(1024, 11);
+                    channel.noteOn(58, 65);
+                    zone = Zone.D;
+                }
+            } else if (dx * dx + dy * dy > TAILLE_PALIER * TAILLE_PALIER * 4) {
+                if (zone != Zone.C) {
+                    channel.programChange(1024, 11);
+                    channel.noteOn(59, 70);
+                    zone = Zone.C;
+                }
+            } else if (dx * dx + dy * dy > TAILLE_PALIER * TAILLE_PALIER) {
+                if (zone != Zone.B) {
+                    channel.programChange(1024, 11);
+                    channel.noteOn(60, 75);
+                    zone = Zone.B;
+                }
+            } else {
+                if (zone != Zone.A) {
+                    channel.programChange(1024, 11);
+                    channel.noteOn(61, 80);
+                    zone = Zone.A;
+                }
+            }
+        }
+    }
+
+    private void cibleTrouvee(int dx, int dy) throws IOException {
+        if (!cibleTrouvee) {
+            if ((Math.abs(dx) < 0.5 * TARGET_SIZE) && (Math.abs(dy) < 0.5 * TARGET_SIZE)) {
+                playNote(1);
+                cibleTrouvee = true;
+            }
+        }
+        if (((Math.abs(dx) > 0.5 * TARGET_SIZE) || (Math.abs(dy) > 0.5 * TARGET_SIZE)) && (cibleTrouvee)) {
+            playNote(3);
+            cibleTrouvee = false;
+        }
+
+    }
+
+    private void printResultats() {
+        System.out.println("***");
+        System.out.println("Nombre cible trouvées: " + nbTargetFound + ", nombre erreurs :" + nbErreurs);
+    }
+
+    private void playNote(int note) {
+        channel.allNotesOff();
+        if (channel != null) {
+
+            switch (note) {
+                case 1:
+                    channel.programChange(1024, 13);
+                    channel.noteOn(80, 100);
+                    break;
+                case 2:
+                    channel.programChange(0, 9);
+                    channel.noteOn(70, 70);
+                    break;
+                case 3:
+                    channel.programChange(0, 9);
+                    channel.noteOn(50, 70);
+                    break;
+                case 4:
+                    channel.programChange(1024, 11);
+                    channel.noteOn(75, 70);
+                    break;
+
+                case 5:
+                    channel.programChange(0, 27);
+                    channel.noteOn(40, 70);
+                    break;
+            }
+        }
+    }
+
+    public Dimension getPreferredSize() {
+        System.out.println("Get preferred size... (Thread :" + Thread.currentThread());
+        return PREFERRED_SIZE;
+
+    }
+
+    public void sayDirection(int dx, int dy) throws IOException {
+
+        this.audioStreamBas = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\bas.wav"));
+        this.audioStreamDroite = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
+        this.audioStreamEnBasADroite = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\enbasadroite.wav"));
+        this.audioStreamEnBasAGauche = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\enbasagauche.wav"));
+        this.audioStreamEnHautAGauche = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\enhautagauche.wav"));
+        this.audioStreamGauche = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
+        this.audioStreamHaut = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\haut.wav"));
+        this.audioStreamEnHautADroite = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\enhautadroite.wav"));
+
+        // FONCTION Atan2 permet de transformer un doublet de coordonnees en angle en radian, ici le 0 rad est au sud.
+        double angle = Math.atan2((double) dy, (double) dx);
+        System.out.println(angle);
+
+        if (angle < -2.512) {
+            AudioPlayer.player.start(audioStreamDroite);
+        } else if (angle < -1.884) {
+            AudioPlayer.player.start(audioStreamEnBasADroite);
+        } else if (angle < -1.256) {
+            AudioPlayer.player.start(audioStreamBas);
+        } else if (angle < -0.628) {
+            AudioPlayer.player.start(audioStreamEnBasAGauche);
+        } else if (angle < 0.628) {
+            AudioPlayer.player.start(audioStreamGauche);
+        } else if (angle < 1.256) {
+            AudioPlayer.player.start(audioStreamEnHautAGauche);
+        } else if (angle < 1.884) {
+            AudioPlayer.player.start(audioStreamHaut);
+        } else if (angle < 2.512) {
+            AudioPlayer.player.start(audioStreamEnHautADroite);
+        } else {
+            AudioPlayer.player.start(audioStreamDroite);
+        };
+    }
+
+    public void paintComponent(final Graphics g) {
+        System.out.println("Painting component... (Thread :" + Thread.currentThread());
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.RED);
+        g.fillRect(targetX, targetY, TARGET_SIZE, TARGET_SIZE);
+        g.drawLine(targetX, 0, targetX, (int) PREFERRED_SIZE.getHeight());
+        g.drawLine(targetX + TARGET_SIZE, 0, targetX + TARGET_SIZE, (int) PREFERRED_SIZE.getHeight());
+    }
+
 }

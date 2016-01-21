@@ -89,9 +89,6 @@ class GuidageComponent_4 extends JComponent {
                         //Remise a zéro du compteur pour le timer
                         startTime = currentTime; // on réinitialise le compteur
                     }
-                       if (AudioPlayer.player.isAlive()){
-                           System.out.println("alive");
-                       }
                 } while (true);
             }
         };
@@ -177,8 +174,6 @@ class GuidageComponent_4 extends JComponent {
         if (!dyOK) {
             if (dx > 0) {
                 AudioPlayer.player.start(audioStreamA);
-                        AudioPlayer.player.interrupt();
-
             } else {
                 AudioPlayer.player.start(audioStreamB);
             }

@@ -38,7 +38,7 @@ public final class MainFrame extends JFrame {
     String fichierParse;
     static List<Brick> brickList;
 
-    public MainFrame() throws IOException, MidiUnavailableException {
+    public MainFrame() throws IOException, MidiUnavailableException, InterruptedException {
         setTitle("Daredevil");
         setResizable(false);
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -120,25 +120,23 @@ public final class MainFrame extends JFrame {
         // ESPACE DE GUIDAGE 8 DIRECTIONS 3 LEVELS OF DISTANCE
         
 //        final GuidageComponent_1 canvas = new GuidageComponent_1();
-//        add(canvas, BorderLayout.SOUTH);
+//        add(canvas);
         
           // ESPACE DE GUIDAGE HORIZONTAL/VERTICAL 3 LEVELS OF DISTANCE
         
-//            final GuidageComponent_2 canvas = new GuidageComponent_2();
-//            add(canvas, BorderLayout.SOUTH);
+            final GuidageComponent_2 canvas = new GuidageComponent_2();
+            add(canvas);
             
          // ESPACE DE GUIDAGE PAR LE SON
             
 //            final GuidageComponent_3 canvas = new GuidageComponent_3();
-//            add(canvas, BorderLayout.SOUTH);
+//            add(canvas);
             
          // BON ESPACE DE GUIDAGE PAR LES AXES ET LE SON CONTINU
             
-            final GuidageComponent_4 canvas = new GuidageComponent_4();
-            add(canvas);
+//            final GuidageComponent_4 canvas = new GuidageComponent_4();
+//            add(canvas);
 
-//             final GuidageComponent_5 canvas = new GuidageComponent_5();
-//            add(canvas, BorderLayout.SOUTH);
 
         pack();
     }

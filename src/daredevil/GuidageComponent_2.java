@@ -1,7 +1,6 @@
 //Ceci est le component qui implemente les prototypes suivants :
 //- en direction : direction par système Axe Horizontal puis Axe Vertical
 //- en guidage : guidage par 3 seuils de distance en distance absolue (indépendant des axes)
-
 package daredevil;
 
 import java.awt.Color;
@@ -9,203 +8,319 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.awt.event.MouseMotionAdapter;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.sound.midi.Instrument;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
+import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 import javax.swing.JComponent;
+import javax.swing.Timer;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 /**
  *
  * @author ferreisi
  */
 class GuidageComponent_2 extends JComponent {
-    
-    private static final Dimension PREFERRED_SIZE = new Dimension(1200,900);
+
+    private static final Dimension PREFERRED_SIZE = new Dimension(1920, 1200);
     private int targetX = 400;
     private int targetY = 400;
-    private static final int TARGET_SIZE = 30;
+    private static final int TARGET_SIZE = 50;
     Boolean dyOK = false;
     Boolean dxOK = false;
+    private int posX = 0;
+    private int posY = 0;
+    Boolean cibleTrouvee = false;
+    Boolean axeIntercepte = false;
 
-    public GuidageComponent_2(){
-        
-       
-                addMouseMotionListener(new MouseMotionAdapter() {
-                    public void mouseMoved (final MouseEvent ev){
-                          sayAxeDirection((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
-                          sayDistanceFarClose((int) (ev.getY()-targetY-0.5*TARGET_SIZE),(int) (ev.getX()-targetX-0.5*TARGET_SIZE));
-                          
-                          if ((Math.abs(ev.getX()-targetX-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)&&(Math.abs(ev.getY()-targetY-0.5*TARGET_SIZE)<0.5*TARGET_SIZE)){   
-                              System.out.println("Target trouvée");
-                              sayTargetFound();
-                              repositionnerTarget();
-                              repaint();
-                          }
-            }
-                  
-                });
+    private int nbTargetFound = 0;
+    private int nbErreurs = 0;
 
-    }
-    
-    private void repositionnerTarget() {
-                targetX = (int)(Math.random()*PREFERRED_SIZE.width); 
-                targetY = (int)(Math.random()*PREFERRED_SIZE.height); 
-            }
-    
-    private void sayTargetFound(){
-                    Speech freeTTStargetfound = new Speech("Target Found");
-                    freeTTStargetfound.speak();
-    }
-    
-    public Dimension getPreferredSize(){
-             System.out.println("Get preferred size... (Thread :"+Thread.currentThread());
-             return PREFERRED_SIZE;
-             
-    }
-    
-    private void sayAxeDirection(int dx, int dy){
-        Speech freeTTSleft = new Speech("Left");
-        Speech freeTTSright = new Speech("Right");
-        Speech freeTTSstop = new Speech("Stop");
-        Speech freeTTSup = new Speech("Up");
-        Speech freeTTSdown = new Speech("Down");
-        
-        //VERIFICATION DE DY
-        if(!dyOK){
-         if (dy>0){
-                            System.out.println("gauche");
-                            freeTTSleft.speak();                       
-        }
-        else {
-            System.out.println("droite");
-                            freeTTSright.speak();
-        }
-            
-        if (Math.abs(dy)<0.5*TARGET_SIZE){
-                System.out.println("Y axis OK");
-                freeTTSstop.speak();
-                dyOK = true;
-                
-            }
-        } else {
-             if (Math.abs(dy)>0.5*TARGET_SIZE){
-                System.out.println("Y axis not OK anymore");
-                dyOK = false;
-             }
-             
-             if(!dxOK){
-                          // VERIFICATION DE DX
+    // Variables pour le synthetiseur MIDI
+    Synthesizer syn = MidiSystem.getSynthesizer();
+    MidiChannel channel = syn.getChannels()[0];
 
-         if (dx>0){
-                            System.out.println("haut");
-                            freeTTSup.speak();                       
-        }
-        else {
-            System.out.println("bas");
-                            freeTTSdown.speak();
-        }
-            
-        if (Math.abs(dx)<0.5*TARGET_SIZE){
-                System.out.println("X axis OK");
-                freeTTSstop.speak();
-                dxOK = true;
-                
-            }
-        } else {
-                 if (Math.abs(dx)>0.5*TARGET_SIZE){
-                System.out.println("X axis not OK anymore");
-                dxOK = false;
-                 }
-                 
-                 if (dxOK){
-                                     System.out.println("Target found");
+    // Variables pour les sons WAV
+    AudioStream audioStreamA;
+    AudioStream audioStreamB;
+    AudioStream audioStreamC;
+    AudioStream audioStreamD;
+    AudioStream audioStreamE;
+    AudioStream audioStreamF;
 
-                 }
-             }
-             
-        }
-    }
-    
-    private void sayDistanceFarClose(int dx, int dy) {
-                Speech freeTTSfar = new Speech("Far");
-                Speech freeTTSclose = new Speech("Close");
-                Speech freeTTSveryclose = new Speech("Very Close");
-                if (dx*dx+dy*dy>200*200){
-                    freeTTSfar.speak();
-                } else if (dx*dx+dy*dy>100*100){
-                   freeTTSclose.speak();
+    private boolean audioStreamAPlayed = false;
+    private boolean audioStreamBPlayed = false;
+
+    public GuidageComponent_2() throws MidiUnavailableException, IOException {
+
+        syn.open();
+        final MidiChannel[] mc = syn.getChannels();
+        Instrument[] instr = syn.getDefaultSoundbank().getInstruments();
+        syn.loadInstrument(instr[33]);
+
+        Thread mainLoop = new Thread() {
+            public void run() {
+                int frequence = 1200;
+                long startTime = System.currentTimeMillis();
+                do {
+                    long currentTime = System.currentTimeMillis();
+                    long elapsedTime = currentTime - startTime; // calcul du temps écoulé
+
+                    if (elapsedTime > frequence) {
+
+                        //Action principale
+                        if (!dyOK) {
+                            try {
+
+                                sayDroiteGauche(posX);
+                            } catch (IOException ex) {
+                                Logger.getLogger(GuidageComponent_2.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+
+                        if ((dyOK) && (!dxOK)) {
+                            try {
+                                sayHautBas(posX, posY);
+                            } catch (IOException ex) {
+                                Logger.getLogger(GuidageComponent_2.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+
+                        //Remise a zéro du compteur pour le timer
+                        startTime = currentTime; // on réinitialise le compteur
+                    }
+                } while (true);
+            }
+        };
+
+        mainLoop.start();
+
+        addMouseListener(new MouseListener() {
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if ((Math.abs(e.getX() - targetX - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE) && (Math.abs(e.getY() - targetY - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE)) {
+                    playNote(4);
+                    nbTargetFound++;
+                    try {
+                        repositionnerTarget(e.getX());
+                    } catch (IOException ex) {
+                        Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+                    repaint();
                 } else {
-                    freeTTSveryclose.speak();
+                    playNote(5);
+                    nbErreurs++;
+                }
+                printResultats();
+
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseEntered(MouseEvent e) {
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+            }
+        });
+
+        addMouseMotionListener(new MouseMotionAdapter() {
+            public void mouseMoved(final MouseEvent ev) {
+
+                //Update coordonnees de la souris
+                posX = ev.getX();
+                posY = ev.getY();
+
+                try {
+                    sayAxeDirection((int) (posY - targetY - 0.5 * TARGET_SIZE), (int) (posX - targetX - 0.5 * TARGET_SIZE));
+                } catch (IOException ex) {
+                    Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                try {
+                    axeIntercepte((int) (posX - targetX - 0.5 * TARGET_SIZE));
+                } catch (IOException ex) {
+                    Logger.getLogger(GuidageComponent_2.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+                try {
+                    cibleTrouvee((int) (posY - targetY - 0.5 * TARGET_SIZE), (int) (posX - targetX - 0.5 * TARGET_SIZE));
+                } catch (IOException ex) {
+                    Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-    
-    public void sayDistanceCoordonnees(int dx, int dy){
-                    String text1 = Integer.toString(dx);
-                    String text2 = Integer.toString(dy);
-                    Speech freeTTS1 = new Speech(text1);
-                    Speech freeTTS2 = new Speech(text2);
 
-                    freeTTS1.speak();
-                    System.out.println("say speech1 dx");
-                    freeTTS2.speak();
-                    System.out.println("say speech2 dy");     
+        });
+
+    }
+
+    private void axeIntercepte(int dx) throws IOException {
+        if (!axeIntercepte) {
+            if (Math.abs(dx) < 0.5 * TARGET_SIZE) {
+                playNote(1);
+                axeIntercepte = true;
+            }
+        }
+        if ((Math.abs(dx) > 0.5 * TARGET_SIZE) && (axeIntercepte)) {
+            axeIntercepte = false;
+        }
+    }
+
+    private void cibleTrouvee(int dx, int dy) throws IOException {
+        if (!cibleTrouvee) {
+            if ((Math.abs(dx) < 0.5 * TARGET_SIZE) && (Math.abs(dy) < 0.5 * TARGET_SIZE)) {
+                playNote(2);
+                cibleTrouvee = true;
+            }
+        }
+        if (((Math.abs(dx) > 0.5 * TARGET_SIZE) || (Math.abs(dy) > 0.5 * TARGET_SIZE)) && (cibleTrouvee)) {
+            playNote(3);
+            cibleTrouvee = false;
+        }
+
+    }
+
+    private void printResultats() {
+        System.out.println("***");
+        System.out.println("Nombre cible trouvées: " + nbTargetFound + ", nombre erreurs :" + nbErreurs);
+    }
+
+    private void sayDroiteGauche(int x) throws IOException{
+          this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
+        this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
+        
+        if ((x - targetX - 0.5 * TARGET_SIZE) > 0) {
+            AudioPlayer.player.start(audioStreamA);
+        } else {
+            AudioPlayer.player.start(audioStreamB);
+        }
     }
     
-    public void sayDirection(int dx, int dy){
-        // FONCTION Atan2 permet de transformer un doublet de coordonnees en angle en radian, ici le 0 rad est au sud.
-                    double angle = Math.atan2((double) dy,(double) dx);
-                    System.out.println(angle);
-             
-                    Speech freeTTSnorth = new Speech("Go North");
-                    Speech freeTTSnortheast = new Speech("Go North east");
-                    Speech freeTTSeast = new Speech("Go east");
-                    Speech freeTTSsoutheast = new Speech("Go south east");
-                    Speech freeTTSsouth = new Speech("Go south");
-                    Speech freeTTSsouthwest = new Speech("Go south west");
-                    Speech freeTTSwest = new Speech("Go west");
-                    Speech freeTTSnorthwest = new Speech("Go North west");
+    private void sayHautBas(int x, int y) throws IOException {
+        this.audioStreamE = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\haut.wav"));
+        this.audioStreamF = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\bas.wav"));
 
-                    if (angle < -2.512) {freeTTSsouth.speak();
-                    System.out.println("go south");
-                    }
-                    else if (angle < -1.884) {freeTTSsoutheast.speak();
-                                        System.out.println("go southeast");
+        if ((y - targetY - 0.5 * TARGET_SIZE) > 0) {
+            AudioPlayer.player.start(audioStreamE);
+        } else {
+            AudioPlayer.player.start(audioStreamF);
 
-                    }
-                    else if (angle < -1.256) {freeTTSeast.speak();
-                                        System.out.println("go east");
-
-                    }
-                    else if (angle < -0.628) {freeTTSnortheast.speak();
-                                        System.out.println("go northeast");
-
-                    }
-                    else if (angle < 0.628) {freeTTSnorth.speak();
-                                        System.out.println("go north");
-
-                    }
-                    else if (angle < 1.256) {freeTTSnorthwest.speak();
-                                        System.out.println("go northwest");
-
-                    }
-                    else if (angle < 1.884) {freeTTSwest.speak();
-                                        System.out.println("go west");
-
-                    }
-                    else if (angle < 2.512) {freeTTSsouthwest.speak();
-                                        System.out.println("go southwest");
-
-                    }
-                    else {freeTTSsouth.speak();
-                                              System.out.println("go south");
-  
-                            };
+        }
     }
-    
-    public void paintComponent(final Graphics g){
-              System.out.println("Painting component... (Thread :"+Thread.currentThread());
-               g.setColor(Color.WHITE);
-               g.fillRect(0,0,getWidth(),getHeight());
-               g.setColor(Color.RED);
-               g.fillOval(targetX,targetY,TARGET_SIZE,TARGET_SIZE);
+
+    private void playNote(int note) {
+        channel.allNotesOff();
+        if (channel != null) {
+
+            switch (note) {
+                case 1:
+                    channel.programChange(1024, 13);
+                    channel.noteOn(80, 50);
+                    break;
+                case 2:
+                    channel.programChange(0, 9);
+                    channel.noteOn(70, 70);
+                    break;
+                case 3:
+                    channel.programChange(0, 9);
+                    channel.noteOn(50, 70);
+                    break;
+                case 4:
+                    channel.programChange(1024, 11);
+                    channel.noteOn(75, 70);
+                    break;
+
+                case 5:
+                    channel.programChange(0, 27);
+                    channel.noteOn(40, 70);
+                    break;
+            }
+        }
     }
-    
+
+    private void repositionnerTarget(int x) throws IOException {
+
+        this.audioStreamC = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtargetgauche.wav"));
+        this.audioStreamD = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtargetdroite.wav"));
+
+        targetX = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 0.5 * TARGET_SIZE));
+        targetY = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 0.5 * TARGET_SIZE));
+        if (x > targetX) {
+            AudioPlayer.player.start(audioStreamC);
+        } else {
+            AudioPlayer.player.start(audioStreamD);
+
+        }
+        audioStreamAPlayed = true;
+        audioStreamBPlayed = true;
+        cibleTrouvee = false;
+        dyOK = false;
+        dxOK = false;
+    }
+
+    public Dimension getPreferredSize() {
+        System.out.println("Get preferred size... (Thread :" + Thread.currentThread());
+        return PREFERRED_SIZE;
+
+    }
+
+    private void sayAxeDirection(int dx, int dy) throws IOException {
+
+      
+
+        //VERIFICATION DE DY
+        if (!dyOK) {
+            
+            if (Math.abs(dy) < 0.5 * TARGET_SIZE) {
+                dyOK = true;
+
+            }
+        } else {
+            if (Math.abs(dy) > 0.5 * TARGET_SIZE) {
+               
+                dyOK = false;
+            }
+
+            if (!dxOK) {
+                // VERIFICATION DE DX
+                if (Math.abs(dx) < 0.5 * TARGET_SIZE) {
+                    dxOK = true;
+                }
+            } else {
+                if (Math.abs(dx) > 0.5 * TARGET_SIZE) {
+                    dxOK = false;
+                }
+            }
+        }
+    }
+
+    public void paintComponent(final Graphics g) {
+        System.out.println("Painting component... (Thread :" + Thread.currentThread());
+        g.setColor(Color.WHITE);
+        g.fillRect(0, 0, getWidth(), getHeight());
+        g.setColor(Color.RED);
+        g.fillRect(targetX, targetY, TARGET_SIZE, TARGET_SIZE);
+        g.drawLine(targetX, 0, targetX, (int) PREFERRED_SIZE.getHeight());
+        g.drawLine(targetX + TARGET_SIZE, 0, targetX + TARGET_SIZE, (int) PREFERRED_SIZE.getHeight());
+    }
+
 }
