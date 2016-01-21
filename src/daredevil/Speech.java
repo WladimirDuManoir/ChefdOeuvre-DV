@@ -5,8 +5,8 @@
  */
 package daredevil;
 
-import com.sun.speech.freetts.Voice;
-import com.sun.speech.freetts.VoiceManager;
+//import com.sun.speech.freetts.Voice;
+//import com.sun.speech.freetts.VoiceManager;
 import java.util.*;
 import java.util.*;
 import javax.sound.midi.Synthesizer;
@@ -25,11 +25,7 @@ public class Speech {
  }
  
  public void speak() {
-  Voice voice;
-  VoiceManager voiceManager = VoiceManager.getInstance();
-  voice = voiceManager.getVoice(VOICENAME_kevin);
-  voice.allocate();
-  voice.speak(text);
+     System.err.println("Project must be clean up speak not working ! ");
  }
  
  public static void main(String[] args) {
