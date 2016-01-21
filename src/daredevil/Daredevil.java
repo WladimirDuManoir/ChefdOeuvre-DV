@@ -31,17 +31,8 @@ public class Daredevil {
 
             @Override
             public void run() {
-                try {
-                    System.out.println("Creating GUI... (Thread :" + Thread.currentThread());
-                    final MainFrame frame = new MainFrame();
-                    frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-
-                    frame.setVisible(true);
-                } catch (IOException ex) {
-                    Logger.getLogger(Daredevil.class.getName()).log(Level.SEVERE, null, ex);
-                } catch (MidiUnavailableException ex) {
-                    Logger.getLogger(Daredevil.class.getName()).log(Level.SEVERE, null, ex);
-                }
+                final OptionsFrame frame = new OptionsFrame();
+                frame.setVisible(true);
             }
         });
 
