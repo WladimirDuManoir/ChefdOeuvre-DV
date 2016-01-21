@@ -37,11 +37,13 @@ public final class MainFrame extends JFrame {
     
     String fichierParse;
     static List<Brick> brickList;
+    private static int guidage; 
 
     public MainFrame() throws IOException, MidiUnavailableException, InterruptedException {
         setTitle("Daredevil");
         setResizable(false);
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        guidage = 4;
 
         final JLabel label = new JLabel("Bienvenue dans l'application DAREDEVIL");
        // add(label, BorderLayout.NORTH);
@@ -116,29 +118,32 @@ public final class MainFrame extends JFrame {
         group.add(afficherBrickList);
 
         //add(group, BorderLayout.CENTER);
-
-        // ESPACE DE GUIDAGE 8 DIRECTIONS 3 LEVELS OF DISTANCE
-        
-//        final GuidageComponent_1 canvas = new GuidageComponent_1();
-//        add(canvas);
-        
-          // ESPACE DE GUIDAGE HORIZONTAL/VERTICAL 3 LEVELS OF DISTANCE
-        
-            final GuidageComponent_2 canvas = new GuidageComponent_2();
-            add(canvas);
-            
-         // ESPACE DE GUIDAGE PAR LE SON
-            
-//            final GuidageComponent_3 canvas = new GuidageComponent_3();
-//            add(canvas);
-            
-         // BON ESPACE DE GUIDAGE PAR LES AXES ET LE SON CONTINU
-            
-//            final GuidageComponent_4 canvas = new GuidageComponent_4();
-//            add(canvas);
-
-
+        switch(guidage) {
+            case 1:        // ESPACE DE GUIDAGE 8 DIRECTIONS 4 LEVELS OF DISTANCE
+                add(new GuidageComponent_1());
+                break;
+            case 2:          // GUIDAGE: horizontal/vertical MODE: son droite/gauche haut/bas  
+                add(new GuidageComponent_2());
+                break;
+            case 3:          // GUIDAGE: la boussole MODE: la game de piano
+                add(new GuidageComponent_3());
+                break;
+            case 4:          // BON ESPACE DE GUIDAGE PAR LES AXES ET LE SON CONTINU
+                add(new GuidageComponent_4());
+                break;
+            default: 
+                System.err.println("Guidage numùber ain't right ! ");
+                break;
+        }
         pack();
+    }
+
+    public static int getGuidage() {
+        return guidage;
+    }
+
+    public static void setGuidage(int guidage) {
+        MainFrame.guidage = guidage;
     }
 
     public void sayBrick(Brick brick) {
