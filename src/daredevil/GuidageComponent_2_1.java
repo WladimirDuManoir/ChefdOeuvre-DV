@@ -32,7 +32,7 @@ import sun.audio.AudioStream;
  */
 class GuidageComponent_2 extends JComponent {
 
-    private static final Dimension PREFERRED_SIZE = new Dimension(1920, 1200);
+    private static final Dimension PREFERRED_SIZE = new Dimension(1366,768);
     private int targetX = 400;
     private int targetY = 400;
     private static final int TARGET_SIZE = 50;
@@ -205,8 +205,8 @@ class GuidageComponent_2 extends JComponent {
     }
 
     private void sayDroiteGauche(int x) throws IOException{
-          this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
-        this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
+          this.audioStreamA = new AudioStream(new FileInputStream("sounds\\gauche.wav"));
+        this.audioStreamB = new AudioStream(new FileInputStream("sounds\\droite.wav"));
         
         if ((x - targetX - 0.5 * TARGET_SIZE) > 0) {
             AudioPlayer.player.start(audioStreamA);
@@ -216,8 +216,8 @@ class GuidageComponent_2 extends JComponent {
     }
     
     private void sayHautBas(int x, int y) throws IOException {
-        this.audioStreamE = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\haut.wav"));
-        this.audioStreamF = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\bas.wav"));
+        this.audioStreamE = new AudioStream(new FileInputStream("sounds\\haut.wav"));
+        this.audioStreamF = new AudioStream(new FileInputStream("sounds\\bas.wav"));
 
         if ((y - targetY - 0.5 * TARGET_SIZE) > 0) {
             AudioPlayer.player.start(audioStreamE);
@@ -259,11 +259,11 @@ class GuidageComponent_2 extends JComponent {
 
     private void repositionnerTarget(int x) throws IOException {
 
-        this.audioStreamC = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtargetgauche.wav"));
-        this.audioStreamD = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtargetdroite.wav"));
+        this.audioStreamC = new AudioStream(new FileInputStream("sounds\\newtargetgauche.wav"));
+        this.audioStreamD = new AudioStream(new FileInputStream("sounds\\newtargetdroite.wav"));
 
-        targetX = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 0.5 * TARGET_SIZE));
-        targetY = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 0.5 * TARGET_SIZE));
+       targetX = (int) (1.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 3 * TARGET_SIZE));
+        targetY = (int) (1.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 3 * TARGET_SIZE));
         if (x > targetX) {
             AudioPlayer.player.start(audioStreamC);
         } else {

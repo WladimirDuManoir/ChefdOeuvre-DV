@@ -31,8 +31,14 @@ public class Daredevil {
 
             @Override
             public void run() {
-                final OptionsFrame frame = new OptionsFrame();
-                frame.setVisible(true);
+                try {
+                    final OptionsFrame frame = new OptionsFrame();
+                    frame.setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(Daredevil.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (MidiUnavailableException ex) {
+                    Logger.getLogger(Daredevil.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
 

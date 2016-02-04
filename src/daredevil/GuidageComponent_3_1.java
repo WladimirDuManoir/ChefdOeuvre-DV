@@ -29,7 +29,7 @@ import sun.audio.AudioStream;
  */
 class GuidageComponent_3 extends JComponent {
 
-    private static final Dimension PREFERRED_SIZE = new Dimension(1920, 1200);
+    private static final Dimension PREFERRED_SIZE = new Dimension(1366,768);
     private int targetX = 400;
     private int targetY = 400;
     private static final int TARGET_SIZE = 50;
@@ -82,7 +82,7 @@ class GuidageComponent_3 extends JComponent {
                         System.out.println("debug");
                         try {
                             if (!cibleTrouvee) {
-                                sayDirection(posX - targetX, posY - targetY);
+                                sayDirection(posX - targetX-25, posY - targetY-25);
                             }
                         } catch (IOException ex) {
                             Logger.getLogger(GuidageComponent_1.class.getName()).log(Level.SEVERE, null, ex);
@@ -162,10 +162,10 @@ class GuidageComponent_3 extends JComponent {
 
     private void repositionnerTarget(int x, int y) throws IOException {
 
-        this.audioStreamNewTarget = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtarget.wav"));
+        this.audioStreamNewTarget = new AudioStream(new FileInputStream("sounds\\newtarget.wav"));
 
-        targetX = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 0.5 * TARGET_SIZE));
-        targetY = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 0.5 * TARGET_SIZE));
+       targetX = (int) (1.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 3 * TARGET_SIZE));
+        targetY = (int) (1.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 3 * TARGET_SIZE));
 
         AudioPlayer.player.start(audioStreamNewTarget);
         cibleTrouvee = false;
@@ -284,14 +284,14 @@ class GuidageComponent_3 extends JComponent {
 
     public void sayDirection(int dx, int dy) throws IOException {
 
-        this.audioStreamBas = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\bas.wav"));
-        this.audioStreamDroite = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
-        this.audioStreamEnBasADroite = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\enbasadroite.wav"));
-        this.audioStreamEnBasAGauche = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\enbasagauche.wav"));
-        this.audioStreamEnHautAGauche = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\enhautagauche.wav"));
-        this.audioStreamGauche = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
-        this.audioStreamHaut = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\haut.wav"));
-        this.audioStreamEnHautADroite = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\enhautadroite.wav"));
+        this.audioStreamBas = new AudioStream(new FileInputStream("sounds\\bas.wav"));
+        this.audioStreamDroite = new AudioStream(new FileInputStream("sounds\\droite.wav"));
+        this.audioStreamEnBasADroite = new AudioStream(new FileInputStream("sounds\\enbasadroite.wav"));
+        this.audioStreamEnBasAGauche = new AudioStream(new FileInputStream("sounds\\enbasagauche.wav"));
+        this.audioStreamEnHautAGauche = new AudioStream(new FileInputStream("sounds\\enhautagauche.wav"));
+        this.audioStreamGauche = new AudioStream(new FileInputStream("sounds\\gauche.wav"));
+        this.audioStreamHaut = new AudioStream(new FileInputStream("sounds\\haut.wav"));
+        this.audioStreamEnHautADroite = new AudioStream(new FileInputStream("sounds\\enhautadroite.wav"));
 
         // FONCTION Atan2 permet de transformer un doublet de coordonnees en angle en radian, ici le 0 rad est au sud.
         double angle = Math.atan2((double) dy, (double) dx);

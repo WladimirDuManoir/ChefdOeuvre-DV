@@ -5,11 +5,18 @@
  */
 package daredevil;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.sound.midi.Instrument;
+import javax.sound.midi.MidiChannel;
+import javax.sound.midi.MidiSystem;
 import javax.sound.midi.MidiUnavailableException;
+import javax.sound.midi.Synthesizer;
 import javax.swing.JFrame;
+import sun.audio.AudioPlayer;
+import sun.audio.AudioStream;
 
 /**
  *
@@ -17,11 +24,34 @@ import javax.swing.JFrame;
  */
 public class OptionsFrame extends javax.swing.JFrame {
 
+    AudioStream audioStreamGauche;
+    AudioStream audioStreamDroite;
+    AudioStream audioStreamBas;
+    AudioStream audioStreamHaut;
+    AudioStream audioStreamEnbasadroite;
+    AudioStream audioStreamEnbasagauche;
+    AudioStream audioStreamEnhautagauche;
+    AudioStream audioStreamEnhautadroite;
+    AudioStream audioStreamTresloin;
+    AudioStream audioStreamTresproche;
+    AudioStream audioStreamProche;
+    AudioStream audioStreamLoin;
+    AudioStream audioStreamNewtarget;
+    AudioStream audioStreamNewtargetdroite;
+    AudioStream audioStreamNewtargetgauche;
+
+    Synthesizer syn = MidiSystem.getSynthesizer();
+    MidiChannel channel = syn.getChannels()[0];
+
     /**
      * Creates new form OptionsFrame
      */
-    public OptionsFrame() {
+    public OptionsFrame() throws MidiUnavailableException, IOException {
         initComponents();
+        syn.open();
+        final MidiChannel[] mc = syn.getChannels();
+        Instrument[] instr = syn.getDefaultSoundbank().getInstruments();
+        syn.loadInstrument(instr[33]);
     }
 
     /**
@@ -49,7 +79,6 @@ public class OptionsFrame extends javax.swing.JFrame {
         jPanel5 = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jButton8 = new javax.swing.JButton();
-        jButton9 = new javax.swing.JButton();
         jLabel5 = new javax.swing.JLabel();
         jPanel6 = new javax.swing.JPanel();
         jButton10 = new javax.swing.JButton();
@@ -137,6 +166,11 @@ public class OptionsFrame extends javax.swing.JFrame {
         });
 
         jButton3.setText("Haut");
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setText("Bas");
         jButton4.addActionListener(new java.awt.event.ActionListener() {
@@ -180,10 +214,25 @@ public class OptionsFrame extends javax.swing.JFrame {
         jLabel3.setText("Distance en mots ");
 
         jButton5.setText("Loin");
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setText("Proche");
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jButton7.setText("Trés proche");
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton14.setText("Très loin");
         jButton14.addActionListener(new java.awt.event.ActionListener() {
@@ -226,17 +275,10 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         jLabel4.setText("Son rapprochement");
 
-        jButton8.setText("Loin (frequence)");
+        jButton8.setText("Son à != fréquence");
         jButton8.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton8ActionPerformed(evt);
-            }
-        });
-
-        jButton9.setText("Proche (frequence)");
-        jButton9.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton9ActionPerformed(evt);
             }
         });
 
@@ -246,10 +288,9 @@ public class OptionsFrame extends javax.swing.JFrame {
             jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addGroup(jPanel5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jLabel4)
-                    .addComponent(jButton8, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(jButton9, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 125, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel5Layout.setVerticalGroup(
@@ -259,8 +300,6 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton8)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jButton9)
                 .addGap(0, 0, Short.MAX_VALUE))
         );
 
@@ -371,9 +410,14 @@ public class OptionsFrame extends javax.swing.JFrame {
             }
         });
 
-        jButton26.setText("En bas à droit");
+        jButton26.setText("En bas à droite");
+        jButton26.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton26ActionPerformed(evt);
+            }
+        });
 
-        jButton34.setText("En haut à gauche");
+        jButton34.setText("En haut à droite");
         jButton34.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton34ActionPerformed(evt);
@@ -603,7 +647,7 @@ public class OptionsFrame extends javax.swing.JFrame {
 
         jLabel10.setText("Tests");
 
-        jLabel11.setText("Test no1");
+        jLabel11.setText("Tâche 1");
 
         commencer1.setText("Commencer");
         commencer1.setActionCommand("");
@@ -666,7 +710,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
-        jLabel13.setText("Test no2");
+        jLabel13.setText("Tâche 2");
 
         commencer2.setText("Commencer");
         commencer2.setActionCommand("");
@@ -729,7 +773,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
-        jLabel15.setText("Test no3");
+        jLabel15.setText("Tâche 3");
 
         commencer3.setText("Commencer");
         commencer3.setActionCommand("");
@@ -792,7 +836,7 @@ public class OptionsFrame extends javax.swing.JFrame {
                 .addContainerGap(33, Short.MAX_VALUE))
         );
 
-        commencer4.setText("Test no4");
+        commencer4.setText("Tâche 4");
 
         commencer5.setText("Commencer");
         commencer5.setActionCommand("");
@@ -918,30 +962,27 @@ public class OptionsFrame extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // Start Tuto 
+        playAudioStream(audioStreamDroite);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        // TODO add your handling code here:
+        playAudioStream(audioStreamGauche);
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
-        // TODO add your handling code here:
+        playAudioStream(audioStreamBas);
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton8ActionPerformed
-
-    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton9ActionPerformed
+        playNote(1);
+     }//GEN-LAST:event_jButton8ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        // TODO add your handling code here:
+        playNote(2);
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        playNote(3);
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton11ActionPerformed
 
@@ -986,28 +1027,28 @@ public class OptionsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jTextField5ActionPerformed
 
     private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton14ActionPerformed
-        // TODO add your handling code here:
+        playAudioStream(audioStreamTresloin);
     }//GEN-LAST:event_jButton14ActionPerformed
 
     private void jButton18ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton18ActionPerformed
-        // TODO add your handling code here:
+        playAudioStream(audioStreamEnbasagauche);
     }//GEN-LAST:event_jButton18ActionPerformed
 
     private void jButton22ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton22ActionPerformed
-        // TODO add your handling code here:
+        playAudioStream(audioStreamEnhautagauche);
     }//GEN-LAST:event_jButton22ActionPerformed
 
     private void jButton34ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton34ActionPerformed
-        // TODO add your handling code here:
+        playAudioStream(audioStreamEnhautadroite);
     }//GEN-LAST:event_jButton34ActionPerformed
 
     private void jButton35ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton35ActionPerformed
-        // TODO add your handling code here:
+        playNote(4);
     }//GEN-LAST:event_jButton35ActionPerformed
 
     private void jButton36ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton36ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButton36ActionPerformed
+        playNote(5);
+     }//GEN-LAST:event_jButton36ActionPerformed
 
     private void jButton39ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton39ActionPerformed
         // TODO add your handling code here:
@@ -1021,22 +1062,41 @@ public class OptionsFrame extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton42ActionPerformed
 
-    private void targetFrame(int guidage){
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        playAudioStream(audioStreamHaut);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        playAudioStream(audioStreamLoin);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        playAudioStream(audioStreamProche);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        playAudioStream(audioStreamTresproche);
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton26ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton26ActionPerformed
+        playAudioStream(audioStreamEnbasadroite);
+    }//GEN-LAST:event_jButton26ActionPerformed
+
+    private void targetFrame(int guidage) {
         try {
             System.out.println("Creating GUI... (Thread :" + Thread.currentThread());
-            final MainFrame frame = new MainFrame();
-            frame.setGuidage(guidage);
+            final MainFrame frame = new MainFrame(guidage);
             frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             frame.setVisible(true);
         } catch (IOException ex) {
             Logger.getLogger(Daredevil.class.getName()).log(Level.SEVERE, null, ex);
         } catch (MidiUnavailableException ex) {
             Logger.getLogger(Daredevil.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
-    
+
     /**
      * @param args the command line arguments
      */
@@ -1067,7 +1127,13 @@ public class OptionsFrame extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new OptionsFrame().setVisible(true);
+                try {
+                    new OptionsFrame().setVisible(true);
+                } catch (IOException ex) {
+                    Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
+                } catch (MidiUnavailableException ex) {
+                    Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
         });
     }
@@ -1115,7 +1181,6 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JButton jButton6;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
-    private javax.swing.JButton jButton9;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -1156,4 +1221,58 @@ public class OptionsFrame extends javax.swing.JFrame {
     private javax.swing.JTextField jTextField4;
     private javax.swing.JTextField jTextField5;
     // End of variables declaration//GEN-END:variables
+
+    private void playAudioStream(AudioStream as) {
+        try {
+            this.audioStreamGauche = new AudioStream(new FileInputStream("sounds\\gauche.wav"));
+            this.audioStreamDroite = new AudioStream(new FileInputStream("sounds\\droite.wav"));
+            this.audioStreamBas = new AudioStream(new FileInputStream("sounds\\bas.wav"));
+            this.audioStreamEnbasadroite = new AudioStream(new FileInputStream("sounds\\enbasadroite.wav"));
+            this.audioStreamEnbasagauche = new AudioStream(new FileInputStream("sounds\\enbasagauche.wav"));
+            this.audioStreamEnhautadroite = new AudioStream(new FileInputStream("sounds\\enhautadroite.wav"));
+            this.audioStreamEnhautagauche = new AudioStream(new FileInputStream("sounds\\enhautagauche.wav"));
+            this.audioStreamHaut = new AudioStream(new FileInputStream("sounds\\haut.wav"));
+            this.audioStreamProche = new AudioStream(new FileInputStream("sounds\\proche.wav"));
+            this.audioStreamTresloin = new AudioStream(new FileInputStream("sounds\\tresloin.wav"));
+            this.audioStreamTresproche = new AudioStream(new FileInputStream("sounds\\tresproche.wav"));
+            this.audioStreamLoin = new AudioStream(new FileInputStream("sounds\\loin.wav"));
+            this.audioStreamNewtarget = new AudioStream(new FileInputStream("sounds\\newtarget.wav"));
+            this.audioStreamNewtargetdroite = new AudioStream(new FileInputStream("sounds\\newtargetdroite.wav"));
+            this.audioStreamNewtargetgauche = new AudioStream(new FileInputStream("sounds\\newtargetgauche.wav"));
+
+            AudioPlayer.player.start(as);
+        } catch (IOException ex) {
+            Logger.getLogger(OptionsFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    private void playNote(int note) {
+        channel.allNotesOff();
+        if (channel != null) {
+
+            switch (note) {
+                case 1:
+                    channel.programChange(1024, 13);
+                    channel.noteOn(80, 50);
+                    break;
+                case 2:
+                    channel.programChange(0, 9);
+                    channel.noteOn(70, 70);
+                    break;
+                case 3:
+                    channel.programChange(0, 9);
+                    channel.noteOn(50, 70);
+                    break;
+                case 4:
+                    channel.programChange(1024, 11);
+                    channel.noteOn(75, 70);
+                    break;
+
+                case 5:
+                    channel.programChange(0, 27);
+                    channel.noteOn(40, 70);
+                    break;
+            }
+        }
+    }
 }

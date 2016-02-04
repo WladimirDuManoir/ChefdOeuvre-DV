@@ -32,7 +32,7 @@ import sun.audio.AudioStream;
  */
 class GuidageComponent_4 extends JComponent {
 
-    private static final Dimension PREFERRED_SIZE = new Dimension(1920, 1200);
+    private static final Dimension PREFERRED_SIZE = new Dimension(1366,768);
     private static final int FREQUENCE_MIN = 100;
     private static final int SUPPLEMENT_FREQUENCE = 600;
     private int targetX = 400;
@@ -164,11 +164,11 @@ class GuidageComponent_4 extends JComponent {
     }
 
     private void repeatInstruction(int dx, int dy) throws IOException {
-
-        this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
-        this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
-        this.audioStreamE = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\haut.wav"));
-        this.audioStreamF = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\bas.wav"));
+new AudioStream(new FileInputStream("sounds\\gauche.wav"));
+        this.audioStreamB = 
+        this.audioStreamA = new AudioStream(new FileInputStream("sounds\\droite.wav"));
+        this.audioStreamE = new AudioStream(new FileInputStream("sounds\\haut.wav"));
+        this.audioStreamF = new AudioStream(new FileInputStream("sounds\\bas.wav"));
 
         
         if (!dyOK) {
@@ -204,11 +204,11 @@ class GuidageComponent_4 extends JComponent {
             switch (note) {
                 case 1:
                     channel.programChange(1024, 13);
-                    channel.noteOn(80, 50);
+                    channel.noteOn(80, 90);
                     break;
                 case 2:
                     channel.programChange(0, 9);
-                    channel.noteOn(70, 70);
+                    channel.noteOn(70, 80);
                     break;
                 case 3:
                     channel.programChange(0, 9);
@@ -229,11 +229,11 @@ class GuidageComponent_4 extends JComponent {
 
     private void repositionnerTarget(int x) throws IOException {
 
-        this.audioStreamC = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtargetgauche.wav"));
-        this.audioStreamD = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\newtargetdroite.wav"));
+        this.audioStreamC = new AudioStream(new FileInputStream("sounds\\newtargetgauche.wav"));
+        this.audioStreamD = new AudioStream(new FileInputStream("sounds\\newtargetdroite.wav"));
 
-        targetX = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 0.5 * TARGET_SIZE));
-        targetY = (int) (0.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 0.5 * TARGET_SIZE));
+        targetX = (int) (1.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.width - 3 * TARGET_SIZE));
+        targetY = (int) (1.5 * TARGET_SIZE + Math.random() * (PREFERRED_SIZE.height - 3 * TARGET_SIZE));
         if (x > targetX) {
             AudioPlayer.player.start(audioStreamC);
 
@@ -255,10 +255,10 @@ class GuidageComponent_4 extends JComponent {
 
     private void sayAxeDirection(int dx, int dy) throws IOException {
 
-        this.audioStreamA = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\gauche.wav"));
-        this.audioStreamB = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\droite.wav"));
-        this.audioStreamE = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\haut.wav"));
-        this.audioStreamF = new AudioStream(new FileInputStream("C:\\Users\\ferreisi\\Desktop\\bas.wav"));
+        this.audioStreamA = new AudioStream(new FileInputStream("sounds\\gauche.wav"));
+        this.audioStreamB = new AudioStream(new FileInputStream("sounds\\droite.wav"));
+        this.audioStreamE = new AudioStream(new FileInputStream("sounds\\haut.wav"));
+        this.audioStreamF = new AudioStream(new FileInputStream("sounds\\bas.wav"));
 
         //VERIFICATION DE DY
         if (!dyOK) {

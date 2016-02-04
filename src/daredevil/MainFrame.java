@@ -5,22 +5,17 @@
  */
 package daredevil;
 
-import java.awt.BorderLayout;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import javax.sound.midi.MidiUnavailableException;
-import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.WindowConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -39,11 +34,10 @@ public final class MainFrame extends JFrame {
     static List<Brick> brickList;
     private static int guidage; 
 
-    public MainFrame() throws IOException, MidiUnavailableException, InterruptedException {
+    public MainFrame(int guidage) throws IOException, MidiUnavailableException, InterruptedException {
         setTitle("Daredevil");
         setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        guidage = 4;
 
         final JLabel label = new JLabel("Bienvenue dans l'application DAREDEVIL");
        // add(label, BorderLayout.NORTH);
