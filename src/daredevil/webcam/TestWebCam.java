@@ -2,7 +2,7 @@
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package daredevil;
+package daredevil.webcam;
 
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -74,7 +74,7 @@ public class TestWebCam extends JPanel implements ActionListener {
         //System.loadLibrary("opencv_java310");
         //CascadeClassifier faceDetector=new CascadeClassifier("C:\\opencv\\sources\\data\\lbpcascades\\lbpcascade_silverware.xml");
         //CascadeClassifier faceDetector=new CascadeClassifier("C:\\opencv\\sources\\data\\lbpcascades\\lbpcascade_profileface.xml");
-        CascadeClassifier faceDetector = new CascadeClassifier("C:\\opencv\\sources\\data\\lbpcascades\\lbpcascade_frontalface.xml");
+        CascadeClassifier faceDetector = new CascadeClassifier("C:\\Users\\ferreisi\\Desktop\\opencv\\sources\\data\\lbpcascades\\lbpcascade_frontalface.xml");
         TestWebCam toc = new TestWebCam();
 
         frame.add(toc);;

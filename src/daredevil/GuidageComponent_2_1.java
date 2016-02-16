@@ -32,7 +32,7 @@ import sun.audio.AudioStream;
  */
 class GuidageComponent_2 extends JComponent {
 
-    private static final Dimension PREFERRED_SIZE = new Dimension(1366,768);
+    private static final Dimension PREFERRED_SIZE = new Dimension(1900,1200);
     private int targetX = 400;
     private int targetY = 400;
     private static final int TARGET_SIZE = 50;

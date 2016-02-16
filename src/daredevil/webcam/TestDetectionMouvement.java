@@ -1,4 +1,4 @@
-package daredevil;
+package daredevil.webcam;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -26,7 +26,7 @@ import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 import org.opencv.videoio.VideoCapture;
  
-public class TestOpenCV {
+public class TestDetectionMouvement {
     static {
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
