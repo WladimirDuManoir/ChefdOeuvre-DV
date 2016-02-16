@@ -58,10 +58,10 @@ public class DetectionObjet {
         List<Mat> lhsv = new ArrayList<Mat>(3);
         
         //Valeurs pour le rouge
-//        Scalar hsv_min = new Scalar(0, 50, 50, 0);
-//        Scalar hsv_max = new Scalar(6, 255, 255, 0);
-//        Scalar hsv_min2 = new Scalar(175, 50, 50, 0);
-//        Scalar hsv_max2 = new Scalar(179, 255, 255, 0);
+        Scalar hsv_min = new Scalar(0, 50, 50, 0);
+        Scalar hsv_max = new Scalar(6, 255, 255, 0);
+        Scalar hsv_min2 = new Scalar(175, 50, 50, 0);
+        Scalar hsv_max2 = new Scalar(179, 255, 255, 0);
 
 //valeurs pour le vert
 //        Scalar hsv_min = new Scalar(40, 0, 0, 0);
@@ -70,10 +70,10 @@ public class DetectionObjet {
 //        Scalar hsv_max2 = new Scalar(60, 255, 255, 0);
         
 //Valeurs pour le bleu ciel
-         Scalar hsv_min = new Scalar(80, 0, 0, 0);
-        Scalar hsv_max = new Scalar(90, 255, 255, 0);
-        Scalar hsv_min2 = new Scalar(91, 0, 0, 0);
-        Scalar hsv_max2 = new Scalar(96, 255, 255, 0);
+//         Scalar hsv_min = new Scalar(80, 0, 0, 0);
+//        Scalar hsv_max = new Scalar(90, 255, 255, 0);
+//        Scalar hsv_min2 = new Scalar(91, 0, 0, 0);
+//        Scalar hsv_max2 = new Scalar(96, 255, 255, 0);
         
 
         Size sz = new Size(640, 480);
@@ -90,7 +90,7 @@ public class DetectionObjet {
                     Core.inRange(hsv_image, hsv_min, hsv_max, thresholded);
                     Core.inRange(hsv_image, hsv_min2, hsv_max2, thresholded2);
                     Core.bitwise_or(thresholded, thresholded2, thresholded);
-
+                    
                     Core.split(hsv_image, lhsv);
 
                     Mat S = lhsv.get(1);
@@ -123,6 +123,8 @@ public class DetectionObjet {
                                     (double) data2[i + 2]), 0, 0, 360,
                                     new Scalar(255, 0, 255), 4, 8, 0);
                         }
+                        
+                        // Creation du rectangle de detection
                         Rect r = detect_red_ball(thresholded);
                         if (r != null) {
                             Imgproc.rectangle(frame, r.tl(), r.br(), new Scalar(0,
