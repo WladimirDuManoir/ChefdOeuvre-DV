@@ -58,10 +58,10 @@ public class DetectionObjet {
         List<Mat> lhsv = new ArrayList<Mat>(3);
         
         //Valeurs pour le rouge
-        Scalar hsv_min = new Scalar(0, 50, 50, 0);
-        Scalar hsv_max = new Scalar(6, 255, 255, 0);
-        Scalar hsv_min2 = new Scalar(175, 50, 50, 0);
-        Scalar hsv_max2 = new Scalar(179, 255, 255, 0);
+//        Scalar hsv_min = new Scalar(0, 50, 50, 0);
+//        Scalar hsv_max = new Scalar(6, 255, 255, 0);
+//        Scalar hsv_min2 = new Scalar(175, 50, 50, 0);
+//        Scalar hsv_max2 = new Scalar(179, 255, 255, 0);
 
 //valeurs pour le vert
 //        Scalar hsv_min = new Scalar(40, 0, 0, 0);
@@ -70,10 +70,10 @@ public class DetectionObjet {
 //        Scalar hsv_max2 = new Scalar(60, 255, 255, 0);
         
 //Valeurs pour le bleu ciel
-//         Scalar hsv_min = new Scalar(80, 0, 0, 0);
-//        Scalar hsv_max = new Scalar(90, 255, 255, 0);
-//        Scalar hsv_min2 = new Scalar(91, 0, 0, 0);
-//        Scalar hsv_max2 = new Scalar(96, 255, 255, 0);
+         Scalar hsv_min = new Scalar(80, 0, 0, 0);
+        Scalar hsv_max = new Scalar(90, 255, 255, 0);
+        Scalar hsv_min2 = new Scalar(91, 0, 0, 0);
+        Scalar hsv_max2 = new Scalar(96, 255, 255, 0);
         
 
         Size sz = new Size(640, 480);

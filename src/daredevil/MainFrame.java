@@ -21,18 +21,15 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 import org.xml.sax.SAXException;
 
-        
 /**
  *
  * @author ferreisi
  */
 public final class MainFrame extends JFrame {
-    
 
-    
     String fichierParse;
     static List<Brick> brickList;
-    private static int guidage; 
+    private static int guidage;
 
     public MainFrame(int guidage) throws IOException, MidiUnavailableException, InterruptedException {
         setTitle("Daredevil");
@@ -40,7 +37,7 @@ public final class MainFrame extends JFrame {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 
         final JLabel label = new JLabel("Bienvenue dans l'application DAREDEVIL");
-       // add(label, BorderLayout.NORTH);
+        // add(label, BorderLayout.NORTH);
 
         final JButton openFichier = new JButton("Sélectionner fichier");
 
@@ -112,7 +109,7 @@ public final class MainFrame extends JFrame {
         group.add(afficherBrickList);
 
         //add(group, BorderLayout.CENTER);
-        switch(guidage) {
+        switch (guidage) {
             case 1:        // ESPACE DE GUIDAGE 8 DIRECTIONS 4 LEVELS OF DISTANCE
                 add(new GuidageComponent_1());
                 break;
@@ -125,7 +122,10 @@ public final class MainFrame extends JFrame {
             case 4:          // BON ESPACE DE GUIDAGE PAR LES AXES ET LE SON CONTINU
                 add(new GuidageComponent_4());
                 break;
-            default: 
+            case 5:          // BON ESPACE DE GUIDAGE PAR LES AXES ET LE SON CONTINU
+                add(new GuidageComponentNext(null));
+                break;
+            default:
                 System.err.println("Guidage numùber ain't right ! ");
                 break;
         }

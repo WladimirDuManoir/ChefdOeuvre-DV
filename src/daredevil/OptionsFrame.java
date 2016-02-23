@@ -987,7 +987,7 @@ public class OptionsFrame extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void commencer0ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_commencer0ActionPerformed
-        targetFrame(4);
+        targetFrame(5);
     }//GEN-LAST:event_commencer0ActionPerformed
 
     private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed

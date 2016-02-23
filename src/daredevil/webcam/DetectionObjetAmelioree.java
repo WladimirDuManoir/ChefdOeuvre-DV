@@ -81,7 +81,7 @@ public class DetectionObjetAmelioree{
 //        Scalar hsv_min2 = new Scalar(91, 0, 0, 0);
 //        Scalar hsv_max2 = new Scalar(96, 255, 255, 0);
         
-         Scalar hsv_min = new Scalar(38, 50, 50, 0);
+         Scalar hsv_min = new Scalar(10, 50, 50, 0);
          Scalar hsv_max = new Scalar(75, 255, 255, 0);
 
 //    Orange  0-22

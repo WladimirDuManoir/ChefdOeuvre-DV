@@ -128,7 +128,5 @@ public class Brick {
         return "Brick:: ID = "+this.id+", Color = " + convertColorToString(this.color)
          + ", Pos = " + this.posX + "," + this.posY + "," + this.posZ
                 + ", Rot = "+convertRotToString(this.rot) ;
-
     }
-    
 }
