@@ -150,9 +150,11 @@ class GuidageComponentNext extends JComponent {
             legohorizontaltransparent = ImageIO.read(new File("images\\legohorizontaltransparent.jpg"));
             legofond = ImageIO.read(new File("images\\legofond.jpg"));
             legodepart = ImageIO.read(new File("images\\legodepart.jpg"));
+            legoarrivee = ImageIO.read(new File("images\\legoarrivee.jpg"));
             legoarriveetransparent = ImageIO.read(new File("images\\legoarriveetransparent.jpg"));
             legodeparttransparent = ImageIO.read(new File("images\\legodeparttransparent.jpg"));
             legoija = ImageIO.read(new File("images\\legoija.jpg"));
+            legoijatransparent = ImageIO.read(new File("images\\legoijatransparent.jpg"));
         } catch (IOException e) {
         }
 
@@ -194,24 +196,71 @@ class GuidageComponentNext extends JComponent {
                 } else {
 
                     if (e.getButton() == MouseEvent.BUTTON1) {
-                        if ((arrondiBrique(e.getX()) == arrondiBrique(targetX)) && ((arrondiBrique(e.getY()) == arrondiBrique(targetY))) && (boollegovertical == booltargetvertical)) {
-                            playNote(4);
-                            nbTargetFound++;
-                            liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
-                            try {
-                                repositionnerTarget(e.getX(), e.getY());
-                            } catch (IOException ex) {
-                                Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+                        if ((arrondiBrique(e.getX()) == arrondiBrique(targetX)) && ((arrondiBrique(e.getY()) == arrondiBrique(targetY)))) {
+                            if (legoCourant == liste_caracteristiques_pieces_aparcourir.get(indice_piece).id) {
+                                switch (legoCourant) {
+                                    case 0:
+                                        if (boollegovertical == booltargetvertical) {
+                                            playNote(4);
+                                            nbTargetFound++;
+                                            liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+                                            try {
+                                                repositionnerTarget(e.getX(), e.getY());
+                                            } catch (IOException ex) {
+                                                Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                                            }
 
-                            repaint();
-                        } else if ((Math.abs(e.getX() - targetX - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE) && (Math.abs(e.getY() - targetY - 0.5 * TARGET_SIZE) < 0.5 * TARGET_SIZE) && (boollegovertical != booltargetvertical)) {
-                            lancerThreadParole("Faites pivoter la pièce");
+                                            repaint();
+                                        } else {
+                                            lancerThreadParole("Faites pivoter la pièce");
+                                        }
+                                        break;
+                                    case 1:
+                                        playNote(4);
+                                        nbTargetFound++;
+                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+                                        try {
+                                            repositionnerTarget(e.getX(), e.getY());
+                                        } catch (IOException ex) {
+                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+
+                                        repaint();
+                                        break;
+                                    case 2:
+                                        playNote(4);
+                                        nbTargetFound++;
+                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+                                        try {
+                                            repositionnerTarget(e.getX(), e.getY());
+                                        } catch (IOException ex) {
+                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+
+                                        repaint();
+                                        break;
+                                    case 3:
+                                        playNote(4);
+                                        nbTargetFound++;
+                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+                                        try {
+                                            repositionnerTarget(e.getX(), e.getY());
+                                        } catch (IOException ex) {
+                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                                        }
+
+                                        repaint();
+                                        break;
+                                }
+                            } else {
+                                lancerThreadParole("Changer de pièce");
+                            }
                         } else {
                             direDistancePlots(e.getX(), e.getY());
                             nbErreurs++;
                         }
-                        printResultats();
+
+                        //printResultats();
                     } else if (e.getButton() == MouseEvent.BUTTON3) {
                         direDistancePlots(e.getX(), e.getY());
 
@@ -297,24 +346,37 @@ class GuidageComponentNext extends JComponent {
             if (actionEvt.getActionCommand().toString() == "VK_R") {
                 String pivot = new String("");
 
-                if (boollegovertical == booltargetvertical) {
-                    pivoterPiece = false;
-                } else {
-                    pivoterPiece = true;
+                switch (legoCourant) {
+                    case 0:
+                        if (boollegovertical == booltargetvertical) {
+                            pivoterPiece = false;
+                        } else {
+                            pivoterPiece = true;
+                        }
+
+                        if (!pivoterPiece) {
+                            pivot = "Faites pivoter la pièce.";
+                        }
+
+                        if (boollegovertical) {
+                            lancerThreadParole("Pièce à l'horizontal." + pivot);
+                            boollegovertical = false;
+                        } else {
+                            lancerThreadParole("Pièce à la verticale." + pivot);
+                            boollegovertical = true;
+                        }
+                        break;
+                    case 1:
+                        lancerThreadParole("Pièce sans orientation");
+                        break;
+                    case 2:
+                        lancerThreadParole("Pièce sans orientation");
+                        break;
+                    case 3:
+                        lancerThreadParole("Pièce sans orientation");
+                        break;
                 }
 
-                if (!pivoterPiece) {
-                    pivot = "Faites pivoter la pièce.";
-                }
-
-                if (boollegovertical) {
-                    lancerThreadParole("Pièce à l'horizontal." + pivot);
-                    boollegovertical = false;
-                } else {
-                    lancerThreadParole("Pièce à la verticale." + pivot);
-
-                    boollegovertical = true;
-                }
                 playNote(8);
             }
 
@@ -425,7 +487,6 @@ class GuidageComponentNext extends JComponent {
                 lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + pivot);
             }
         } else {
-
             if (distanceXplot < 0) {
                 if (distanceYplot < 0) {
                     lancerThreadParole(Integer.toString(-distanceXplot) + " vers la gauche." + Integer.toString(-distanceYplot) + " vers le haut." + pivot);
@@ -439,9 +500,7 @@ class GuidageComponentNext extends JComponent {
                     lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + Integer.toString(distanceYplot) + " vers le bas." + pivot);
                 }
             }
-
         }
-
     }
 
     private void printResultats() {
@@ -592,32 +651,34 @@ class GuidageComponentNext extends JComponent {
         for (Brick brick : brickList) {
             System.out.println("Id brick :" + brick.getId());
 
-            switch (brick.getRot()) {
-                case 1:
-                    orientation = false;
-                    correctionX = 0;
-                    correctionY = 0;
-                    break;
-                case 2:
-                    orientation = true;
-                    correctionY = +1;
-                    correctionX = 0;
-                    break;
-                case 3:
-                    orientation = false;
-                    correctionX = -3;
-                    correctionY = +1;
-                    break;
-                case 4:
-                    orientation = true;
-                    correctionX = -1;
-                    correctionY = -2;
-                    break;
-            }
+            correctionX = 0;
+            correctionY = 0;
 
             switch (brick.getId()) {
                 case 3001:
                     // Route basique
+                    switch (brick.getRot()) {
+                        case 1:
+                            orientation = false;
+                            correctionX = 0;
+                            correctionY = 0;
+                            break;
+                        case 2:
+                            orientation = true;
+                            correctionY = +1;
+                            correctionX = 0;
+                            break;
+                        case 3:
+                            orientation = false;
+                            correctionX = -3;
+                            correctionY = +1;
+                            break;
+                        case 4:
+                            orientation = true;
+                            correctionX = -1;
+                            correctionY = -2;
+                            break;
+                    }
                     nouvelId = 0;
                     break;
                 case 3003:
@@ -630,6 +691,8 @@ class GuidageComponentNext extends JComponent {
                     break;
                 case 4589:
                     // point d'arrivee
+                    correctionX = 0;
+                    correctionY = +1;
                     nouvelId = 2;
                     break;
                 case 3040:
@@ -671,6 +734,9 @@ class GuidageComponentNext extends JComponent {
                 case 2:
                     g.drawImage(legoarriveetransparent, liste_caracteristiques_pieces_aparcourir.get(i).posXplot * 15, liste_caracteristiques_pieces_aparcourir.get(i).posYplot * 15, this);
                     break;
+                case 3:
+                    g.drawImage(legoijatransparent, liste_caracteristiques_pieces_aparcourir.get(i).posXplot * 15, liste_caracteristiques_pieces_aparcourir.get(i).posYplot * 15, this);
+                    break;
             }
         }
 
@@ -684,11 +750,14 @@ class GuidageComponentNext extends JComponent {
                     }
                     break;
                 case 1:
-                    g.drawImage(legodeparttransparent, liste_caracteristiques_pieces.get(i).posXplot, liste_caracteristiques_pieces.get(i).posYplot, this);
+                    g.drawImage(legodepart, liste_caracteristiques_pieces.get(i).posXplot, liste_caracteristiques_pieces.get(i).posYplot, this);
 
                     break;
                 case 2:
-                    g.drawImage(legoarriveetransparent, liste_caracteristiques_pieces.get(i).posXplot, liste_caracteristiques_pieces.get(i).posYplot, this);
+                    g.drawImage(legoarrivee, liste_caracteristiques_pieces.get(i).posXplot, liste_caracteristiques_pieces.get(i).posYplot, this);
+                    break;
+                case 3:
+                    g.drawImage(legoija, liste_caracteristiques_pieces.get(i).posXplot, liste_caracteristiques_pieces.get(i).posYplot, this);
                     break;
             }
 
@@ -750,6 +819,9 @@ class GuidageComponentNext extends JComponent {
                 break;
             case 2:
                 g.drawImage(legoarrivee, arrondiBrique(posX), arrondiBrique(posY), 15, 15, this);
+                break;
+            case 3:
+                g.drawImage(legoija, arrondiBrique(posX), arrondiBrique(posY), 30, 30, this);
                 break;
         }
 
