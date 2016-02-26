@@ -32,39 +32,58 @@ public class TestDetectionMouvement {
     }
  
     static Mat imag = null;
- 
+    static Mat frame = new Mat();
+    static Mat outerBox = new Mat();
+    static Mat diff_frame = null;
+    static Mat tempon_frame = null;
+    static ArrayList<Rect> array = new ArrayList<Rect>();
+    static VideoCapture camera = new VideoCapture(0);
+    static Size sz = new Size(640, 480);
+    static int i = 0;
+    static JLabel vidpanel = new JLabel();
+    static JFrame jframe = new JFrame("HUMAN MOTION DETECTOR FPS");
+
+    public void setJFrame (JFrame jf) {
+        jframe = jf;
+        jf.setName("Good frame");
+    }
+
+    public void setFrame(Mat f) {
+        frame = f;
+    }
+
+    public  void SetCapture (VideoCapture capture) {
+        System.out.println(capture);
+        camera = capture;
+    }
     public static void main(String[] args) {
-        JFrame jframe = new JFrame("HUMAN MOTION DETECTOR FPS");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        JLabel vidpanel = new JLabel();
         jframe.setContentPane(vidpanel);
         jframe.setSize(640, 480);
         jframe.setVisible(true);
- 
-        Mat frame = new Mat();
-        Mat outerBox = new Mat();
-        Mat diff_frame = null;
-        Mat tempon_frame = null;
-        ArrayList<Rect> array = new ArrayList<Rect>();
-        VideoCapture camera = new VideoCapture(0);
-        Size sz = new Size(640, 480);
-        int i = 0;
- 
+
         while (true) {
+            Main ();
+        }
+    }
+
+    public static void Main () {
+        if (camera != null
+                && frame != null) {
             if (camera.read(frame)) {
                 Imgproc.resize(frame, frame, sz);
                 imag = frame.clone();
                 outerBox = new Mat(frame.size(), CvType.CV_8UC1);
                 Imgproc.cvtColor(frame, outerBox, Imgproc.COLOR_BGR2GRAY);
                 Imgproc.GaussianBlur(outerBox, outerBox, new Size(3, 3), 0);
- 
+
                 if (i == 0) {
                     jframe.setSize(frame.width(), frame.height());
                     diff_frame = new Mat(outerBox.size(), CvType.CV_8UC1);
                     tempon_frame = new Mat(outerBox.size(), CvType.CV_8UC1);
                     diff_frame = outerBox.clone();
                 }
- 
+
                 if (i == 1) {
                     Core.subtract(outerBox, tempon_frame, diff_frame);
                     Imgproc.adaptiveThreshold(diff_frame, diff_frame, 255,
@@ -72,28 +91,28 @@ public class TestDetectionMouvement {
                             Imgproc.THRESH_BINARY_INV, 5, 2);
                     array = detection_contours(diff_frame);
                     if (array.size() > 0) {
- 
+
                         Iterator<Rect> it2 = array.iterator();
                         while (it2.hasNext()) {
                             Rect obj = it2.next();
                             Imgproc.rectangle(imag, obj.br(), obj.tl(),
                                     new Scalar(0, 255, 0), 1);
                         }
- 
+
                     }
                 }
- 
+
                 i = 1;
- 
+
                 ImageIcon image = new ImageIcon(Mat2bufferedImage(imag));
                 vidpanel.setIcon(image);
                 vidpanel.repaint();
                 tempon_frame = outerBox.clone();
- 
+
             }
         }
     }
- 
+
     public static BufferedImage Mat2bufferedImage(Mat image) {
         MatOfByte bytemat = new MatOfByte();
         Imgcodecs.imencode(".jpg", image, bytemat);

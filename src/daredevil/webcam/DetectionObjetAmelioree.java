@@ -38,22 +38,26 @@ public class DetectionObjetAmelioree{
         System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
     }
     static Mat frame = null;
+    static TestDetectionMouvement td;
+    static JFrame jframe;
+    static VideoCapture capture;
 
     public static void main(String arg[]) {
 
-        JFrame jframe = new JFrame("HUMAN MOTION DETECTOR FPS");
+        jframe = new JFrame("Detecte pince");
         jframe.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         JLabel vidpanel = new JLabel();
         jframe.setContentPane(vidpanel);
         jframe.setSize(640, 480);
         jframe.setVisible(true);
+        jframe.setLocationRelativeTo(null);
 
-        VideoCapture capture = new VideoCapture(0);
+        capture = new VideoCapture(0);
 
-        Mat frame = new Mat();
+        frame = new Mat();
         Mat hsv_image = new Mat();
         Mat thresholded = new Mat();
-        //Mat thresholded2 = new Mat();
+        Mat thresholded2 = new Mat();
         Mat circles = new Mat();
 
         Mat array255 = new Mat(480, 640, CvType.CV_8UC1);
@@ -61,28 +65,52 @@ public class DetectionObjetAmelioree{
 
         Mat distance = new Mat(480, 640, CvType.CV_8UC1);
         List<Mat> lhsv = new ArrayList<Mat>(3);
-        
-        //Valeurs pour le rouge
-//        Scalar hsv_min = new Scalar(0, 50, 50, 0);
-//        Scalar hsv_max = new Scalar(6, 255, 255, 0);
-//        Scalar hsv_min2 = new Scalar(175, 50, 50, 0);
-//        Scalar hsv_max2 = new Scalar(179, 255, 255, 0);
 
-       
-//valeurs pour le vert
-//        Scalar hsv_min = new Scalar(40, 0, 0, 0);
-//        Scalar hsv_max = new Scalar(50, 255, 255, 0);
-//        Scalar hsv_min2 = new Scalar(50, 0, 0, 0);
-//        Scalar hsv_max2 = new Scalar(60, 255, 255, 0);
-        
-//Valeurs pour le bleu ciel
-//         Scalar hsv_min = new Scalar(80, 0, 0, 0);
-//        Scalar hsv_max = new Scalar(90, 255, 255, 0);
-//        Scalar hsv_min2 = new Scalar(91, 0, 0, 0);
-//        Scalar hsv_max2 = new Scalar(96, 255, 255, 0);
-        
-         Scalar hsv_min = new Scalar(38, 50, 50, 0);
-         Scalar hsv_max = new Scalar(75, 255, 255, 0);
+        Scalar hsv_min;
+        Scalar hsv_max ;
+        Scalar hsv_min2;
+        Scalar hsv_max2;
+        int color = 5;
+
+
+        switch (color) {
+            case 1: // vert
+                hsv_min = new Scalar(20, 0, 0, 0);
+                hsv_max = new Scalar(50, 255, 255, 0);
+                hsv_min2 = new Scalar(50, 0, 0, 0);
+                hsv_max2 = new Scalar(80, 255, 255, 0);
+                break;
+            case 2: // rouge
+                hsv_min = new Scalar(0, 50, 50, 0);
+                hsv_max = new Scalar(6, 255, 255, 0);
+                hsv_min2 = new Scalar(175, 50, 50, 0);
+                hsv_max2 = new Scalar(179, 255, 255, 0);
+                break;
+            case 3: // orange fonce
+                hsv_min = new Scalar(5, 50, 50, 0);
+                hsv_max = new Scalar(22, 255, 255, 0);
+                hsv_min2 = new Scalar(5, 0, 0, 0);
+                hsv_max2 = new Scalar(22, 255, 255, 0);
+                break;
+            case 4: // jaune postite
+                hsv_min = new Scalar(10, 50, 50, 0);
+                hsv_max = new Scalar(30, 255, 255, 0);
+                hsv_min2 = new Scalar(10, 0, 0, 0);
+                hsv_max2 = new Scalar(30, 255, 255, 0);
+                break;
+            case 5: //
+                hsv_min = new Scalar(5, 50, 50, 0);
+                hsv_max = new Scalar(22, 255, 255, 0);
+                hsv_min2 = new Scalar(8, 0, 0, 0);
+                hsv_max2 = new Scalar(22, 255, 255, 0);
+                break;
+            default : // vert
+                hsv_min = new Scalar(20, 0, 0, 0);
+                hsv_max = new Scalar(50, 255, 255, 0);
+                hsv_min2 = new Scalar(50, 0, 0, 0);
+                hsv_max2 = new Scalar(80, 255, 255, 0);
+                break;
+        }
 
 //    Orange  0-22
 //    Jaune 22- 38
@@ -94,9 +122,15 @@ public class DetectionObjetAmelioree{
         
         Size sz = new Size(640, 480);
 
+      // Set Movement detection
+
+
         capture.read(frame);
         if (capture.isOpened()) {
+            SetDetectionMotion();
             while (true) {
+                // TODO
+                TestDetectionMouvement.Main();
                 capture.read(frame);
                 if (!frame.empty()) {
 
@@ -104,8 +138,8 @@ public class DetectionObjetAmelioree{
 
                     Imgproc.cvtColor(frame, hsv_image, Imgproc.COLOR_BGR2HSV);
                     Core.inRange(hsv_image, hsv_min, hsv_max, thresholded);
-                    //Core.inRange(hsv_image, hsv_min2, hsv_max2, thresholded2);
-                    //Core.bitwise_or(thresholded, thresholded2, thresholded);
+                    Core.inRange(hsv_image, hsv_min2, hsv_max2, thresholded2);
+                    Core.bitwise_or(thresholded, thresholded2, thresholded);
                     
                     Core.split(hsv_image, lhsv);
 
@@ -120,9 +154,9 @@ public class DetectionObjetAmelioree{
 
                     Core.magnitude(S, V, distance);
 
-                    //Core.inRange(distance, new Scalar(0.0), new Scalar(200.0), thresholded2);
+                    Core.inRange(distance, new Scalar(0.0), new Scalar(200.0), thresholded2);
 
-                    //Core.bitwise_and(thresholded, thresholded2, thresholded);
+                    Core.bitwise_and(thresholded, thresholded2, thresholded);
                     
                     Imgproc.GaussianBlur(thresholded, thresholded, new Size(9, 9), 0, 0);
                     Imgproc.HoughCircles(thresholded, circles,
@@ -133,13 +167,13 @@ public class DetectionObjetAmelioree{
                     float[] data2 = new float[rows * elemSize / 4];
                     if (data2.length > 0) {
                         circles.get(0, 0, data2);
-//                        for (int i = 0; i < data2.length; i = i + 3) {
-//                            Point center = new Point(data2[i], data2[i + 1]);
-//                            Imgproc.ellipse(frame, center, new Size(
-//                                    (double) data2[i + 2],
-//                                    (double) data2[i + 2]), 0, 0, 360,
-//                                    new Scalar(255, 0, 255), 4, 8, 0);
-//                        }
+                        for (int i = 0; i < data2.length; i = i + 3) {
+                            Point center = new Point(data2[i], data2[i + 1]);
+                            Imgproc.ellipse(frame, center, new Size(
+                                    (double) data2[i + 2],
+                                    (double) data2[i + 2]), 0, 0, 360,
+                                    new Scalar(255, 0, 255), 4, 8, 0);
+                        }
                         
                         // Creation du rectangle de detection
                         Rect r = detect_red_ball(thresholded);
@@ -147,8 +181,9 @@ public class DetectionObjetAmelioree{
                             Imgproc.rectangle(frame, r.tl(), r.br(), new Scalar(0,
                                     255, 0), 2);
                         }
-                        Imgproc.putText(frame, "( x = " + 0.5 * (r.tl().x + r.br().x) + ", y = " + 0.5 * (r.tl().y + r.br().y) + " )", new Point(0.5 * (r.tl().x + r.br().x), 0.5 * (r.tl().y + r.br().y)), 1, 1, new Scalar(255, 255, 255));
-                        System.out.println("( x = " + r.tl().x + ", y = " +r.tl().y + " )");
+                        Imgproc.putText(frame, "( x = " + 0.5 * (r.tl().x + r.br().x) + ", y = " + 0.5 * (r.tl().y + r.br().y)
+                                + " )", new Point(0.5 * (r.tl().x + r.br().x), 0.5 * (r.tl().y + r.br().y)), 1, 1, new Scalar(255, 255, 255));
+                        System.out.println("color " + hsv_image.toString() + "( x = " + r.tl().x + ", y = " +r.tl().y + " )");
                         //Imgproc.drawMarker(frame, new Point(0.5 * (r.tl().x + r.br().x),0.5 * (r.tl().y + r.br().y)), hsv_max);
                         Imgproc.drawMarker(frame, new Point(r.tl().x,r.tl().y), hsv_max);
 
@@ -204,6 +239,14 @@ public class DetectionObjetAmelioree{
 
         return r;
 
+    }
+
+    public static void SetDetectionMotion () {
+        td = new TestDetectionMouvement();
+        td.setJFrame(jframe);
+        td.setFrame(frame);
+        // TODO bug with sychronisation of the capture 
+        td.SetCapture(capture); // XXX
     }
 
 }
