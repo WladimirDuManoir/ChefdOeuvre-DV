@@ -325,11 +325,11 @@ class GuidageComponentNext extends JComponent {
         int condition = JComponent.WHEN_IN_FOCUSED_WINDOW;
         InputMap inputMap = getInputMap(condition);
 
-        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_R, 0), "VK_R");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "VK_UP");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "VK_LEFT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "VK_RIGHT");
 
-        actionMap.put("VK_R", new KeyAction("VK_R"));
+        actionMap.put("VK_UP", new KeyAction("VK_UP"));
         actionMap.put("VK_LEFT", new KeyAction("VK_LEFT"));
         actionMap.put("VK_RIGHT", new KeyAction("VK_RIGHT"));
 
@@ -343,7 +343,7 @@ class GuidageComponentNext extends JComponent {
 
         @Override
         public void actionPerformed(ActionEvent actionEvt) {
-            if (actionEvt.getActionCommand().toString() == "VK_R") {
+            if (actionEvt.getActionCommand().toString() == "VK_UP") {
                 String pivot = new String("");
 
                 switch (legoCourant) {
@@ -487,6 +487,7 @@ class GuidageComponentNext extends JComponent {
                 lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + pivot);
             }
         } else {
+
             if (distanceXplot < 0) {
                 if (distanceYplot < 0) {
                     lancerThreadParole(Integer.toString(-distanceXplot) + " vers la gauche." + Integer.toString(-distanceYplot) + " vers le haut." + pivot);
@@ -501,6 +502,7 @@ class GuidageComponentNext extends JComponent {
                 }
             }
         }
+
     }
 
     private void printResultats() {
@@ -688,6 +690,8 @@ class GuidageComponentNext extends JComponent {
                 case 3062:
                     //point de depart
                     nouvelId = 1;
+                    correctionY = +1;
+
                     break;
                 case 4589:
                     // point d'arrivee

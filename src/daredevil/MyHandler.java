@@ -73,7 +73,6 @@ public class MyHandler extends DefaultHandler {
                     brick.setRot(4);
                 } else if (Integer.parseInt(tokens[2]) == 1) {
                     brick.setRot(2);
-
                 }
             }
 
