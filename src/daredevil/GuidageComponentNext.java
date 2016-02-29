@@ -328,10 +328,12 @@ class GuidageComponentNext extends JComponent {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), "VK_UP");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "VK_LEFT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "VK_RIGHT");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "VK_DOWN");
 
         actionMap.put("VK_UP", new KeyAction("VK_UP"));
         actionMap.put("VK_LEFT", new KeyAction("VK_LEFT"));
         actionMap.put("VK_RIGHT", new KeyAction("VK_RIGHT"));
+        actionMap.put("VK_DOWN", new KeyAction("VK_DOWN"));
 
     }
 
@@ -386,9 +388,24 @@ class GuidageComponentNext extends JComponent {
 
             if (actionEvt.getActionCommand().toString() == "VK_RIGHT") {
                 changerlego(-1);
-
             }
 
+            if (actionEvt.getActionCommand().toString() == "VK_DOWN") {
+                switch (legoCourant) {
+                    case 0:
+                        lancerThreadParole("Route");
+                        break;
+                    case 1:
+                        lancerThreadParole("Départ");
+                        break;
+                    case 2:
+                        lancerThreadParole("Arrivée");
+                        break;
+                    case 3:
+                        lancerThreadParole("IJA");
+                        break;
+                }
+            }
             repaint();
         }
     }
