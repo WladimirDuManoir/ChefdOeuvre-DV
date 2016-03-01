@@ -42,7 +42,7 @@ public class DetectionObjet {
         jframe.setContentPane(vidpanel);
         jframe.setSize(640, 480);
         jframe.setVisible(true);
-
+  
         VideoCapture capture = new VideoCapture(0);
 
         Mat frame = new Mat();

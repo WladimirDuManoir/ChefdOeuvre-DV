@@ -158,6 +158,26 @@ class GuidageComponentNext extends JComponent {
         } catch (IOException e) {
         }
 
+        Thread mouvementWebcamLoop = new Thread() {
+            public void run() {
+                int frequence = 50;
+                long startTime = System.currentTimeMillis();
+                do {
+                    long currentTime = System.currentTimeMillis();
+                    long elapsedTime = currentTime - startTime; // calcul du temps écoulé
+
+                    if (elapsedTime > frequence) {
+
+                        //Action principale
+                        mouvementWebcam();
+
+                        //Remise a zéro du compteur pour le timer
+                        startTime = currentTime; // on réinitialise le compteur
+                    }
+                } while (true);
+            }
+        };
+        
         Thread mainLoop = new Thread() {
             public void run() {
                 int frequence = 400;
@@ -182,6 +202,7 @@ class GuidageComponentNext extends JComponent {
         };
 
         mainLoop.start();
+        mouvementWebcamLoop.start();
 
         addMouseListener(new MouseListener() {
 
@@ -196,76 +217,89 @@ class GuidageComponentNext extends JComponent {
                 } else {
 
                     if (e.getButton() == MouseEvent.BUTTON1) {
-                        if ((arrondiBrique(e.getX()) == arrondiBrique(targetX)) && ((arrondiBrique(e.getY()) == arrondiBrique(targetY)))) {
-                            if (legoCourant == liste_caracteristiques_pieces_aparcourir.get(indice_piece).id) {
-                                switch (legoCourant) {
-                                    case 0:
-                                        if (boollegovertical == booltargetvertical) {
-                                            playNote(4);
-                                            nbTargetFound++;
-                                            liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
-                                            try {
-                                                repositionnerTarget(e.getX(), e.getY());
-                                            } catch (IOException ex) {
-                                                Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
-                                            }
-
-                                            repaint();
-                                        } else {
-                                            lancerThreadParole("Faites pivoter la pièce");
-                                        }
-                                        break;
-                                    case 1:
-                                        playNote(4);
-                                        nbTargetFound++;
-                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
-                                        try {
-                                            repositionnerTarget(e.getX(), e.getY());
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-
-                                        repaint();
-                                        break;
-                                    case 2:
-                                        playNote(4);
-                                        nbTargetFound++;
-                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
-                                        try {
-                                            repositionnerTarget(e.getX(), e.getY());
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-
-                                        repaint();
-                                        break;
-                                    case 3:
-                                        playNote(4);
-                                        nbTargetFound++;
-                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
-                                        try {
-                                            repositionnerTarget(e.getX(), e.getY());
-                                        } catch (IOException ex) {
-                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
-                                        }
-
-                                        repaint();
-                                        break;
-                                }
-                            } else {
-                                lancerThreadParole("Changer de pièce");
-                            }
-                        } else {
-                            direDistancePlots(e.getX(), e.getY());
-                            nbErreurs++;
-                        }
+//                        if ((arrondiBrique(e.getX()) == arrondiBrique(targetX)) && ((arrondiBrique(e.getY()) == arrondiBrique(targetY)))) {
+//                            if (legoCourant == liste_caracteristiques_pieces_aparcourir.get(indice_piece).id) {
+//                                switch (legoCourant) {
+//                                    case 0:
+//                                        if (boollegovertical == booltargetvertical) {
+//                                            playNote(4);
+//                                            nbTargetFound++;
+//                                            liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+//                                            try {
+//                                                repositionnerTarget(e.getX(), e.getY());
+//                                            } catch (IOException ex) {
+//                                                Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+//                                            }
+//
+//                                            repaint();
+//                                        } else {
+//                                            lancerThreadParole("Faites pivoter la pièce");
+//                                        }
+//                                        break;
+//                                    case 1:
+//                                        playNote(4);
+//                                        nbTargetFound++;
+//                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+//                                        try {
+//                                            repositionnerTarget(e.getX(), e.getY());
+//                                        } catch (IOException ex) {
+//                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+//                                        }
+//
+//                                        repaint();
+//                                        break;
+//                                    case 2:
+//                                        playNote(4);
+//                                        nbTargetFound++;
+//                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+//                                        try {
+//                                            repositionnerTarget(e.getX(), e.getY());
+//                                        } catch (IOException ex) {
+//                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+//                                        }
+//
+//                                        repaint();
+//                                        break;
+//                                    case 3:
+//                                        playNote(4);
+//                                        nbTargetFound++;
+//                                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+//                                        try {
+//                                            repositionnerTarget(e.getX(), e.getY());
+//                                        } catch (IOException ex) {
+//                                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+//                                        }
+//
+//                                        repaint();
+//                                        break;
+//                                }
+//                            } else {
+//                                switch (liste_caracteristiques_pieces_aparcourir.get(indice_piece).id) {
+//                                    case 0:
+//                                        lancerThreadParole("Sélectionner route");
+//                                        break;
+//                                    case 1:
+//                                        lancerThreadParole("Sélectionner départ");
+//                                        break;
+//                                    case 2:
+//                                        lancerThreadParole("Sélectionner arrivée");
+//                                        break;
+//                                    case 3:
+//                                        lancerThreadParole("Sélectionner IJA");
+//                                        break;
+//                                }
+//                            }
+//                        } else {
+//                            direDistancePlots(e.getX(), e.getY());
+//                            nbErreurs++;
+//                        }
 
                         //printResultats();
-                    } else if (e.getButton() == MouseEvent.BUTTON3) {
-                        direDistancePlots(e.getX(), e.getY());
-
                     }
-                    repaint();
+//                    else if (e.getButton() == MouseEvent.BUTTON3) {
+//                        direDistancePlots(e.getX(), e.getY());
+//                    }
+//                    repaint();
 
                 }
             }
@@ -289,29 +323,29 @@ class GuidageComponentNext extends JComponent {
             public void mouseMoved(final MouseEvent ev) {
 
                 //Update coordonnees de la souris
-                posX = ev.getX();
-                posY = ev.getY();
-
-                if (arrondiBrique(posX) != arrondiBrique(posXbuf)) {
-                    playNote(6);
-                }
-
-                if (arrondiBrique(posY) != arrondiBrique(posYbuf)) {
-                    playNote(7);
-                }
-
-                try {
-                    changeDXandDY(ev.getX(), ev.getY());
-
-                } catch (IOException ex) {
-                    Logger.getLogger(GuidageComponent_4.class
-                            .getName()).log(Level.SEVERE, null, ex);
-                }
-
-                posXbuf = posX;
-                posYbuf = posY;
-
-                repaint();
+//                posX = ev.getX();
+//                posY = ev.getY();
+//
+//                if (arrondiBrique(posX) != arrondiBrique(posXbuf)) {
+//                    playNote(6);
+//                }
+//
+//                if (arrondiBrique(posY) != arrondiBrique(posYbuf)) {
+//                    playNote(7);
+//                }
+//
+//                try {
+//                    changeDXandDY(ev.getX(), ev.getY());
+//
+//                } catch (IOException ex) {
+//                    Logger.getLogger(GuidageComponent_4.class
+//                            .getName()).log(Level.SEVERE, null, ex);
+//                }
+//
+//                posXbuf = posX;
+//                posYbuf = posY;
+//
+//                repaint();
             }
 
         });
@@ -329,11 +363,15 @@ class GuidageComponentNext extends JComponent {
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_LEFT, 0), "VK_LEFT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_RIGHT, 0), "VK_RIGHT");
         inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), "VK_DOWN");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "VK_ENTER");
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_NUMPAD0, 0), "VK_NUMPAD0");
 
         actionMap.put("VK_UP", new KeyAction("VK_UP"));
         actionMap.put("VK_LEFT", new KeyAction("VK_LEFT"));
         actionMap.put("VK_RIGHT", new KeyAction("VK_RIGHT"));
         actionMap.put("VK_DOWN", new KeyAction("VK_DOWN"));
+        actionMap.put("VK_ENTER", new KeyAction("VK_ENTER"));
+        actionMap.put("VK_NUMPAD0", new KeyAction("VK_NUMPAD0"));
 
     }
 
@@ -388,26 +426,137 @@ class GuidageComponentNext extends JComponent {
 
             if (actionEvt.getActionCommand().toString() == "VK_RIGHT") {
                 changerlego(-1);
+
             }
 
             if (actionEvt.getActionCommand().toString() == "VK_DOWN") {
+                direLegoCourant();
+            }
+
+            if (actionEvt.getActionCommand().toString() == "VK_ENTER") {
+                if (parcoursReconstitue) {
+                    lancerThreadParole("Parcours reconstitué.");
+                } else {
+                    actionValider();
+                    repaint();
+                }
+            }
+
+            if (actionEvt.getActionCommand().toString() == "VK_NUMPAD0") {
+                if (parcoursReconstitue) {
+                    lancerThreadParole("Parcours reconstitué.");
+                } else {
+                    direDistancePlots(Main.posX, Main.posY);
+                    repaint();
+                }
+            }
+
+            repaint();
+        }
+    }
+
+    private void actionValider() {
+        if ((arrondiBrique(Main.posX) == arrondiBrique(targetX)) && ((arrondiBrique(Main.posY) == arrondiBrique(targetY)))) {
+            if (legoCourant == liste_caracteristiques_pieces_aparcourir.get(indice_piece).id) {
                 switch (legoCourant) {
                     case 0:
-                        lancerThreadParole("Route");
+                        if (boollegovertical == booltargetvertical) {
+                            playNote(4);
+                            nbTargetFound++;
+                            liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+                            try {
+                                repositionnerTarget(Main.posX, Main.posY);
+                            } catch (IOException ex) {
+                                Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+
+                            repaint();
+                        } else {
+                            lancerThreadParole("Faites pivoter la pièce");
+                        }
                         break;
                     case 1:
-                        lancerThreadParole("Départ");
+                        playNote(4);
+                        nbTargetFound++;
+                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+                        try {
+                            repositionnerTarget(Main.posX, Main.posY);
+                        } catch (IOException ex) {
+                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        repaint();
                         break;
                     case 2:
-                        lancerThreadParole("Arrivée");
+                        playNote(4);
+                        nbTargetFound++;
+                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+                        try {
+                            repositionnerTarget(Main.posX, Main.posY);
+                        } catch (IOException ex) {
+                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        repaint();
                         break;
                     case 3:
-                        lancerThreadParole("IJA");
+                        playNote(4);
+                        nbTargetFound++;
+                        liste_caracteristiques_pieces.add(new Caracteristiques_Pieces(liste_caracteristiques_pieces_aparcourir.get(indice_piece).id, arrondiBrique(targetX), arrondiBrique(targetY), booltargetvertical));
+                        try {
+                            repositionnerTarget(Main.posX, Main.posY);
+                        } catch (IOException ex) {
+                            Logger.getLogger(GuidageComponent_4.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+
+                        repaint();
+                        break;
+                }
+            } else {
+                switch (liste_caracteristiques_pieces_aparcourir.get(indice_piece).id) {
+                    case 0:
+                        lancerThreadParole("Sélectionner route");
+                        break;
+                    case 1:
+                        lancerThreadParole("Sélectionner départ");
+                        break;
+                    case 2:
+                        lancerThreadParole("Sélectionner arrivée");
+                        break;
+                    case 3:
+                        lancerThreadParole("Sélectionner IJA");
                         break;
                 }
             }
-            repaint();
+        } else {
+            direDistancePlots(Main.posX, Main.posY);
+            nbErreurs++;
         }
+    }
+
+    private void mouvementWebcam() {
+//Update coordonnees de la souris
+        posX = Main.posX;
+        posY = Main.posY;
+
+        if (arrondiBrique(posX) != arrondiBrique(posXbuf)) {
+            playNote(6);
+        }
+
+        if (arrondiBrique(posY) != arrondiBrique(posYbuf)) {
+            playNote(7);
+        }
+
+        try {
+            changeDXandDY(posX, posY);
+        } catch (IOException ex) {
+            Logger.getLogger(GuidageComponentNext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+        posXbuf = posX;
+        posYbuf = posY;
+
+        repaint();
     }
 
     private void lancerThreadParole(final String s) {
@@ -428,6 +577,23 @@ class GuidageComponentNext extends JComponent {
         };
         if (!lectureEnCours) {
             parole.start();
+        }
+    }
+
+    private void direLegoCourant() {
+        switch (legoCourant) {
+            case 0:
+                lancerThreadParole("Route");
+                break;
+            case 1:
+                lancerThreadParole("Départ");
+                break;
+            case 2:
+                lancerThreadParole("Arrivée");
+                break;
+            case 3:
+                lancerThreadParole("IJA");
+                break;
         }
     }
 
@@ -477,6 +643,24 @@ class GuidageComponentNext extends JComponent {
         int distanceYplot = targetYplot - posYplot;
 
         String pivot = new String("");
+        String changepiece = new String("");
+
+        if (legoCourant != liste_caracteristiques_pieces_aparcourir.get(indice_piece).id) {
+            switch (liste_caracteristiques_pieces_aparcourir.get(indice_piece).id) {
+                case 0:
+                    changepiece = "Sélectionner route";
+                    break;
+                case 1:
+                    changepiece = "Sélectionner départ";
+                    break;
+                case 2:
+                    changepiece = "Sélectionner arrivée";
+                    break;
+                case 3:
+                    changepiece = "Sélectionner IJA";
+                    break;
+            }
+        }
 
         if (boollegovertical == booltargetvertical) {
             pivoterPiece = false;
@@ -484,40 +668,35 @@ class GuidageComponentNext extends JComponent {
             pivoterPiece = true;
         }
 
-        if (pivoterPiece) {
+        if (pivoterPiece && (legoCourant == 0) && (liste_caracteristiques_pieces_aparcourir.get(indice_piece).id == 0)) {
             pivot = "Faites pivoter la pièce.";
         }
 
         if ((distanceXplot == 0) && (distanceYplot == 0)) {
-            lancerThreadParole("Vous êtes sur la cible." + pivot);
+            lancerThreadParole("Vous êtes sur la cible." + pivot + changepiece);
         } else if ((distanceXplot == 0) && (distanceYplot != 0)) {
 
             if (distanceYplot < 0) {
-                lancerThreadParole(Integer.toString(-distanceYplot) + " vers le haut." + pivot);
+                lancerThreadParole(Integer.toString(-distanceYplot) + " vers le haut." + pivot + changepiece);
             } else {
-                lancerThreadParole(Integer.toString(distanceYplot) + " vers le bas." + pivot);
+                lancerThreadParole(Integer.toString(distanceYplot) + " vers le bas." + pivot + changepiece);
             }
         } else if ((distanceXplot != 0) && (distanceYplot == 0)) {
             if (distanceXplot < 0) {
-                lancerThreadParole(Integer.toString(-distanceXplot) + " vers la gauche." + pivot);
+                lancerThreadParole(Integer.toString(-distanceXplot) + " vers la gauche." + pivot + changepiece);
             } else {
-                lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + pivot);
+                lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + pivot + changepiece);
             }
+        } else if (distanceXplot < 0) {
+            if (distanceYplot < 0) {
+                lancerThreadParole(Integer.toString(-distanceXplot) + " vers la gauche." + Integer.toString(-distanceYplot) + " vers le haut." + pivot + changepiece);
+            } else {
+                lancerThreadParole(Integer.toString(-distanceXplot) + " vers la gauche." + Integer.toString(distanceYplot) + " vers le bas." + pivot + changepiece);
+            }
+        } else if (distanceYplot < 0) {
+            lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + Integer.toString(-distanceYplot) + " vers le haut." + pivot + changepiece);
         } else {
-
-            if (distanceXplot < 0) {
-                if (distanceYplot < 0) {
-                    lancerThreadParole(Integer.toString(-distanceXplot) + " vers la gauche." + Integer.toString(-distanceYplot) + " vers le haut." + pivot);
-                } else {
-                    lancerThreadParole(Integer.toString(-distanceXplot) + " vers la gauche." + Integer.toString(distanceYplot) + " vers le bas." + pivot);
-                }
-            } else {
-                if (distanceYplot < 0) {
-                    lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + Integer.toString(-distanceYplot) + " vers le haut." + pivot);
-                } else {
-                    lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + Integer.toString(distanceYplot) + " vers le bas." + pivot);
-                }
-            }
+            lancerThreadParole(Integer.toString(distanceXplot) + " vers la droite." + Integer.toString(distanceYplot) + " vers le bas." + pivot + changepiece);
         }
 
     }
@@ -701,7 +880,7 @@ class GuidageComponentNext extends JComponent {
                     nouvelId = 0;
                     break;
                 case 3003:
-                    //TODO IJA 
+                    //TODO IJA
                     nouvelId = 3;
                     break;
                 case 3062:

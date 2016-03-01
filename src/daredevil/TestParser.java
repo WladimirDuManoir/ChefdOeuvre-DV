@@ -160,5 +160,4 @@ public final class TestParser extends JFrame {
             }
         });
     }
-
 }
